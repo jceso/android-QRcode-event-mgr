@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/titleET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        android:hint="Title"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:inputType="textCapSentences"/>
+
+    <EditText
+        android:id="@+id/subtitleET"
+        android:layout_below="@+id/titleET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:hint="Location"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        android:inputType="textCapSentences" />
+
+    <EditText
+        android:id="@+id/descET"
+        android:layout_below="@+id/subtitleET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:hint="Description"
+        android:textSize="20sp"
+        android:inputType="textCapSentences|textMultiLine" />
+
+</RelativeLayout>

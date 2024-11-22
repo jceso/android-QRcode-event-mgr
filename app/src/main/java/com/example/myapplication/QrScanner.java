@@ -77,7 +77,7 @@ public class QrScanner extends AppCompatActivity {
         list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), EventList.class));
+                startActivity(new Intent(getApplicationContext(), EventListAdmin.class));
                 finish();
             }
         });

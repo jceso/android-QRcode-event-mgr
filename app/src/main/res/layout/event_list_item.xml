@@ -2,14 +2,15 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="4dp"
     app:cardElevation="5dp"
     app:cardCornerRadius="15dp"
-    android:layout_margin="5dp" >
+    android:padding="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="85dp"
         android:padding="10dp">
 
         <TextView
@@ -17,19 +18,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:paddingBottom="5dp"
             android:text="@string/app_name"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/white"/> <!-- ?attr/colorPrimary -->
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" /> <!-- ?attr/colorPrimary -->
 
         <TextView
             android:id="@+id/list_subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/list_title"
-            android:layout_margin="5dp"
-            android:singleLine="true"
-            android:text="@string/app_name"/>
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:text="@string/app_name"
+            android:textSize="15sp"
+            android:singleLine="true" />
 
     </RelativeLayout>
 

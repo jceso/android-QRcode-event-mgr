@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="@drawable/login_bg"
-    tools:context=".EventList">
+    tools:context=".EventListAdmin">
 
     <Button
         android:id="@+id/logout_btn"
@@ -34,21 +34,28 @@
         android:text="@string/email"
         android:textColor="@color/white" />
 
-    <TextView
-        android:id="@+id/value"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/logout_btn"
+        android:layout_margin="20dp"
+        android:layout_marginTop="30dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <TextView
+        android:id="@+id/empty_list"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="378dp"
-        android:gravity="center"
-        android:text="Scanned Value"
-        android:textColor="@color/white" />
+        android:layout_centerInParent="true"
+        android:text="List is empty!" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:contentDescription="Tap to create events"
         app:srcCompat="@android:drawable/ic_input_add"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"

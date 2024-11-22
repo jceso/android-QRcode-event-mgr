@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         // Initiate database connection
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://ing-soft-firebase-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference("event");
-
         String key = myRef.push().getKey();
         event.put("key", key);
 

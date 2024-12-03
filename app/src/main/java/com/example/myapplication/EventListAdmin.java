@@ -83,7 +83,7 @@ public class EventListAdmin extends AppCompatActivity {
         Button btn_date = dialogView.findViewById(R.id.btn_date);
         Button btn_time = dialogView.findViewById(R.id.btn_time);
 
-        dateDialog(btn_date, btn_time);
+        dateDialog(btn_date, btn_time, LocalDateTime.now());
 
         AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
                 .setTitle("Add event")
@@ -106,15 +106,7 @@ public class EventListAdmin extends AppCompatActivity {
                             event.setTitle(title.getText().toString());
                             event.setPlace(subtitle.getText().toString());
                             event.setDescription(desc.getText().toString());
-
-                            Log.d("date", "Before setting");
-                            Log.d("date", "Day: " +d + " | Month: " + mth + " | Year: " + y + "  -  Hour: " + h + " | Minute: " + min);
                             event.setDate(d, mth, y, h, min);
-
-                            /*
-                            LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
-                            Log.d("date", "After the set:\nYear "+date.getYear()+" | Month: "+(date.getMonthValue()+1)+" | Day: "+date.getDayOfMonth()+" | Hour: "+date.getHour()+" | Minute: "+date.getMinute());
-                            */
 
                             database.getReference().child("event").push().setValue(event).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -177,13 +169,20 @@ public class EventListAdmin extends AppCompatActivity {
                         TextView desc = view.findViewById(R.id.descET);
                         Button btn_date = view.findViewById(R.id.btn_date);
                         Button btn_time = view.findViewById(R.id.btn_time);
-                        //LocalDateTime date = event.getDate();
+                        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
+
+                        d = date.getDayOfMonth();
+                        mth = date.getMonthValue();
+                        y = date.getYear();
+                        h = date.getHour();
+                        min = date.getMinute();
+                        dateDialog(btn_date, btn_time, date);
 
                         title.setText(event.getTitle());
                         subtitle.setText(event.getPlace());
                         desc.setText(event.getDescription());
-                        //btn_date.setText(date.getDayOfMonth() + "/" + (date.getMonthValue() + 1) + "/" + date.getYear());
-                        //btn_time.setText(date.getHour() + ":" + date.getMinute());
+                        btn_date.setText(date.getDayOfMonth() + "/" + (date.getMonthValue() + 1) + "/" + date.getYear());
+                        btn_time.setText(date.getHour() + "." + date.getMinute());
 
                         ProgressDialog progressDialog = new ProgressDialog(EventListAdmin.this);
                         AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
@@ -206,6 +205,7 @@ public class EventListAdmin extends AppCompatActivity {
                                         eventUpd.setTitle(title.getText().toString());
                                         eventUpd.setPlace(subtitle.getText().toString());
                                         eventUpd.setDescription(desc.getText().toString());
+                                        eventUpd.setDate(d, mth, y, h, min);
 
                                         database.getReference().child("event").child(event.getKey()).setValue(eventUpd).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
@@ -260,7 +260,8 @@ public class EventListAdmin extends AppCompatActivity {
         });
     }
 
-    private void dateDialog(Button btn_date, Button btn_time) {
+    private void dateDialog(Button btn_date, Button btn_time, LocalDateTime editDate) {
+
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -272,7 +273,7 @@ public class EventListAdmin extends AppCompatActivity {
                         y = year;
                         btn_date.setText(d + "/" + (mth + 1) + "/" + y);
                     }
-                }, 2024, 11, 29);
+                }, editDate.getYear(), editDate.getMonthValue(), editDate.getDayOfMonth());
                 dialog.show();
             }
         });
@@ -287,7 +288,7 @@ public class EventListAdmin extends AppCompatActivity {
                         min = minute;
                         btn_time.setText(h + ":" + min);
                     }
-                }, 15, 35, true);
+                }, editDate.getHour(), editDate.getMinute(), true);
                 dialog.show();
             }
         });

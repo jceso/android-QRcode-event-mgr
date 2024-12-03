@@ -3,6 +3,104 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp" >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/titleET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Title"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:inputType="textCapSentences" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/subtitleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titleLayout"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp" >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/subtitleET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:drawablePadding="16dp"
+            android:drawableRight="@drawable/location"
+            android:hint="Location"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            android:inputType="textCapSentences" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <RelativeLayout
+        android:id="@+id/date_timeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/subtitleLayout"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp">
+        <Button
+            android:id="@+id/btn_date"
+            android:layout_width="170sp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/date"
+            android:drawablePadding="12dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:padding="7dp"
+            android:gravity="start|center_vertical"
+            android:text="Date"
+            android:textSize="15sp"
+            android:textColor="#575757" />
+
+        <Button
+            android:id="@+id/btn_time"
+            android:layout_width="150sp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="10dp"
+            android:drawableStart="@drawable/time"
+            android:drawablePadding="15dp"
+            android:gravity="start|center_vertical"
+            android:padding="7dp"
+            android:text="Time"
+            android:textColor="#575757"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/descLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date_timeLayout"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp" >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/descET"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:gravity="start"
+            android:hint="Description"
+            android:textSize="20sp"
+            android:inputType="textCapSentences|textMultiLine" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--
     <EditText
         android:id="@+id/titleET"
         android:layout_width="match_parent"
@@ -32,12 +130,15 @@
         android:id="@+id/descET"
         android:layout_below="@+id/subtitleET"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
+        android:gravity="start"
         android:hint="Description"
         android:textSize="20sp"
         android:inputType="textCapSentences|textMultiLine" />
+
+    -->
 
 </RelativeLayout>

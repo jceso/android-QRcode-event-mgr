@@ -33,7 +33,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.title.setText(arrayList.get(position).getTitle());
-        holder.subtitle.setText(arrayList.get(position).getSubtitle());
+        holder.subtitle.setText(arrayList.get(position).getPlace());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

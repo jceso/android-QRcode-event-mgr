@@ -1,17 +1,14 @@
 package com.example.myapplication;
 
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -23,8 +20,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
@@ -90,9 +85,8 @@ public class EventListAdmin extends AppCompatActivity {
                     else if (desc.getText().toString().isEmpty())
                         desc.setError("Description is required");
                     else {
-                        ProgressDialog dialog = new ProgressDialog(EventListAdmin.this);
-                        dialog.setMessage("Adding event...");
-                        dialog.show();
+                        ProgressBar progressBar = findViewById(R.id.progress_bar);
+                        progressBar.setVisibility(View.VISIBLE);
 
                         Event event = new Event();
                         event.setTitle(title.getText().toString());
@@ -100,19 +94,13 @@ public class EventListAdmin extends AppCompatActivity {
                         event.setDescription(desc.getText().toString());
                         event.setDate(d, mth, y, h, min);
 
-                        database.getReference().child("event").push().setValue(event).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                dialog.dismiss();
-                                dialogInterface.dismiss();
-                                Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                dialog.dismiss();
-                                Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
-                            }
+                        database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
+                            progressBar.setVisibility(View.GONE);
+                            dialogInterface.dismiss();
+                            Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
+                        }).addOnFailureListener(e -> {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
                         });
                     }
                 }).setNegativeButton("Cancel", (dialogInterface, which) -> dialogInterface.dismiss())
@@ -166,7 +154,7 @@ public class EventListAdmin extends AppCompatActivity {
                     subtitle.setText(event.getPlace());
                     desc.setText(event.getDescription());
                     btn_date.setText(date.getDayOfMonth() + "/" + date.getMonthValue() + "/" + date.getYear());
-                    btn_time.setText(date.getHour() + "." + String.format("%02d", date.getMinute()));
+                    btn_time.setText(date.getHour() + ":" + String.format("%02d", date.getMinute()));
 
                     /*
                         <!-- res/values/strings.xml -->
@@ -177,69 +165,44 @@ public class EventListAdmin extends AppCompatActivity {
                         btn_time.setText(getString(R.string.time_format, date.getHour(), date.getMinute()));
                      */
 
-                    ProgressDialog progressDialog = new ProgressDialog(EventListAdmin.this);
+                    ProgressBar progressBar = findViewById(R.id.progress_bar);
+
                     AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
                             .setTitle("Edit")
                             .setView(view)
-                            .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int which) {
-                                    if (title.getText().toString().isEmpty())
-                                        title.setError("Title is required");
-                                    if (subtitle.getText().toString().isEmpty())
-                                        subtitle.setError("Subtitle is required");
-                                    if (desc.getText().toString().isEmpty())
-                                        desc.setError("Description is required");
+                            .setPositiveButton("Save", (dialogInterface, which) -> {
+                                if (title.getText().toString().isEmpty())
+                                    title.setError("Title is required");
+                                if (subtitle.getText().toString().isEmpty())
+                                    subtitle.setError("Subtitle is required");
+                                if (desc.getText().toString().isEmpty())
+                                    desc.setError("Description is required");
 
-                                    progressDialog.setMessage("Saving...");
-                                    progressDialog.show();
+                                Event eventUpd = new Event();
+                                eventUpd.setTitle(title.getText().toString());
+                                eventUpd.setPlace(subtitle.getText().toString());
+                                eventUpd.setDescription(desc.getText().toString());
+                                eventUpd.setDate(d, mth, y, h, min);
 
-                                    Event eventUpd = new Event();
-                                    eventUpd.setTitle(title.getText().toString());
-                                    eventUpd.setPlace(subtitle.getText().toString());
-                                    eventUpd.setDescription(desc.getText().toString());
-                                    eventUpd.setDate(d, mth, y, h, min);
-
-                                    database.getReference().child("event").child(event.getKey()).setValue(eventUpd).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void unused) {
-                                            progressDialog.dismiss();
-                                            dialogInterface.dismiss();
-                                            Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-                            }).setNeutralButton("Close", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int which) {
+                                progressBar.setVisibility(View.VISIBLE);
+                                database.getReference().child("event").child(event.getKey()).setValue(eventUpd).addOnSuccessListener(unused -> {
+                                    progressBar.setVisibility(View.GONE);
                                     dialogInterface.dismiss();
-                                }
-                            }).setNegativeButton("Delete", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int which) {
-                                    progressDialog.setMessage("Deleting...");
-                                    progressDialog.show();
+                                    Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
+                                }).addOnFailureListener(e -> {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
+                                });
+                            }).setNeutralButton("Close", (dialogInterface, which) -> dialogInterface.dismiss()).setNegativeButton("Delete", (dialogInterface, which) -> {
+                                progressBar.setVisibility(View.VISIBLE);
 
-                                    database.getReference().child("event").child(event.getKey()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void unused) {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(EventListAdmin.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(EventListAdmin.this, "There was an error while deleting data", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
+                                database.getReference().child("event").child(event.getKey()).removeValue().addOnSuccessListener(unused -> {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(EventListAdmin.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                                }).addOnFailureListener(e -> {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(EventListAdmin.this, "There was an error while deleting data", Toast.LENGTH_SHORT).show();
+                                });
                             }).create();
                     alertDialog.show();
                 });
@@ -255,26 +218,20 @@ public class EventListAdmin extends AppCompatActivity {
     private void dateDialog(Button btn_date, Button btn_time, LocalDateTime editDate) {
 
         btn_date.setOnClickListener(v -> {
-            DatePickerDialog dialog = new DatePickerDialog(EventListAdmin.this, new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int month, int day) {
-                    d = day;
-                    mth = month + 1;    //Convert 0-based month (DatePickerDialog) to 1-based (Local
-                    y = year;
-                    btn_date.setText(d + "/" + mth + "/" + y);
-                }
+            DatePickerDialog dialog = new DatePickerDialog(EventListAdmin.this, (view, year, month, day) -> {
+                d = day;
+                mth = month + 1;    //Convert 0-based month (DatePickerDialog) to 1-based (Local
+                y = year;
+                btn_date.setText(d + "/" + mth + "/" + y);
             }, editDate.getYear(), editDate.getMonthValue()-1, editDate.getDayOfMonth());
             dialog.show();
         });
 
         btn_time.setOnClickListener(v -> {
-            TimePickerDialog dialog = new TimePickerDialog(EventListAdmin.this, new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(TimePicker view, int hour, int minute) {
-                    h = hour;
-                    min = minute;
-                    btn_time.setText(h + "." + String.format("%02d", min));
-                }
+            TimePickerDialog dialog = new TimePickerDialog(EventListAdmin.this, (view, hour, minute) -> {
+                h = hour;
+                min = minute;
+                btn_time.setText(h + ":" + String.format("%02d", min));
             }, editDate.getHour(), editDate.getMinute(), true);
             dialog.show();
         });

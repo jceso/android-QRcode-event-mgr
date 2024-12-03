@@ -53,7 +53,7 @@
         android:layout_marginTop="5dp">
         <Button
             android:id="@+id/btn_date"
-            android:layout_width="170sp"
+            android:layout_width="150sp"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/date"
             android:drawablePadding="12dp"
@@ -67,14 +67,14 @@
 
         <Button
             android:id="@+id/btn_time"
-            android:layout_width="150sp"
+            android:layout_width="120sp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="10dp"
-            android:drawableStart="@drawable/time"
+            android:drawableEnd="@drawable/time"
             android:drawablePadding="15dp"
-            android:gravity="start|center_vertical"
+            android:gravity="end|center_vertical"
             android:padding="7dp"
             android:text="Time"
             android:textColor="#575757"

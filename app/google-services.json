@@ -1,13 +1,33 @@
 {
   "project_info": {
-    "project_number": "1075611545309",
-    "project_id": "ing-software-id",
-    "storage_bucket": "ing-software-id.appspot.com"
+    "project_number": "378440512975",
+    "firebase_url": "https://ing-soft-firebase-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "ing-soft-firebase",
+    "storage_bucket": "ing-soft-firebase.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1075611545309:android:f24ca6773a6a82161ef534",
+        "mobilesdk_app_id": "1:378440512975:android:a2621c3f68ffbb31d04eba",
+        "android_client_info": {
+          "package_name": "com.example.logreg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjvLwyOwo6bfJ1OyAAAGkh0WaJRk5hU8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378440512975:android:1e8aacbf11c6d96ad04eba",
         "android_client_info": {
           "package_name": "com.example.myapplication"
         }
@@ -15,7 +35,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCe9qTI165ggMnxCLMmKEMd9y9pCpPGD6A"
+          "current_key": "AIzaSyAjvLwyOwo6bfJ1OyAAAGkh0WaJRk5hU8w"
         }
       ],
       "services": {

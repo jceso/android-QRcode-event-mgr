@@ -36,8 +36,7 @@ import java.util.Objects;
 public class EventListAdmin extends AppCompatActivity {
 
     private FirebaseDatabase database;
-    private int y, mth, d, h, min;
-
+    private int[] dateInfos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +53,16 @@ public class EventListAdmin extends AppCompatActivity {
         FirebaseApp.initializeApp(EventListAdmin.this);
         database = FirebaseDatabase.getInstance("https://ing-soft-firebase-default-rtdb.europe-west1.firebasedatabase.app/");
 
-        // Buttons and views
+        // CRUD setting
+        dateInfos = new int[5];
         FloatingActionButton addButton = findViewById(R.id.addButton);
 
-        // CRUD setting
         addButton.setOnClickListener(v -> addOnDB());
-
         editDeleteEvent();
-
     }
 
     private void addOnDB() {
+        // Setting view and finding XML elements
         View dialogView = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.add_event_dialog, null);
         EditText title = dialogView.findViewById(R.id.titleET);
         EditText subtitle = dialogView.findViewById(R.id.subtitleET);
@@ -72,6 +70,7 @@ public class EventListAdmin extends AppCompatActivity {
         Button btn_date = dialogView.findViewById(R.id.btn_date);
         Button btn_time = dialogView.findViewById(R.id.btn_time);
 
+        // Set date and time picker
         dateDialog(btn_date, btn_time, LocalDateTime.now());
 
         AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
@@ -92,7 +91,7 @@ public class EventListAdmin extends AppCompatActivity {
                         event.setTitle(title.getText().toString());
                         event.setPlace(subtitle.getText().toString());
                         event.setDescription(desc.getText().toString());
-                        event.setDate(d, mth, y, h, min);
+                        event.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
 
                         database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
                             progressBar.setVisibility(View.GONE);
@@ -103,12 +102,13 @@ public class EventListAdmin extends AppCompatActivity {
                             Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
                         });
                     }
-                }).setNegativeButton("Cancel", (dialogInterface, which) -> dialogInterface.dismiss())
+                }).setNeutralButton("Cancel", (dialogInterface, which) -> dialogInterface.dismiss())
                 .create();
         alertDialog.show();
     }
 
     private void editDeleteEvent() {
+        // Setting recycler view
         RecyclerView recyclerView = findViewById(R.id.recycler);
         TextView empty = findViewById(R.id.empty_list);
 
@@ -130,12 +130,13 @@ public class EventListAdmin extends AppCompatActivity {
                     empty.setVisibility(View.GONE);
                 }
 
+                // Set event adapter
                 EventAdapter adapter = new EventAdapter(EventListAdmin.this, arrayList);
                 recyclerView.setAdapter(adapter);
 
                 adapter.setOnItemClickListener(event -> {
+                    // Setting view and finding XML elements
                     View view = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.add_event_dialog, null);
-
                     TextView title = view.findViewById(R.id.titleET);
                     TextView subtitle = view.findViewById(R.id.subtitleET);
                     TextView desc = view.findViewById(R.id.descET);
@@ -143,18 +144,15 @@ public class EventListAdmin extends AppCompatActivity {
                     Button btn_time = view.findViewById(R.id.btn_time);
                     LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
-                    d = date.getDayOfMonth();
-                    mth = date.getMonthValue();
-                    y = date.getYear();
-                    h = date.getHour();
-                    min = date.getMinute();
+                    String btnDateText = date.getDayOfMonth() + "/" + date.getMonthValue() + "/" + date.getYear();
+                    String btnTimeText = date.getHour() + ":" + String.format("%02d", date.getMinute());
                     dateDialog(btn_date, btn_time, date);
 
                     title.setText(event.getTitle());
                     subtitle.setText(event.getPlace());
                     desc.setText(event.getDescription());
-                    btn_date.setText(date.getDayOfMonth() + "/" + date.getMonthValue() + "/" + date.getYear());
-                    btn_time.setText(date.getHour() + ":" + String.format("%02d", date.getMinute()));
+                    btn_date.setText(btnDateText);
+                    btn_time.setText(btnTimeText);
 
                     /*
                         <!-- res/values/strings.xml -->
@@ -182,7 +180,7 @@ public class EventListAdmin extends AppCompatActivity {
                                 eventUpd.setTitle(title.getText().toString());
                                 eventUpd.setPlace(subtitle.getText().toString());
                                 eventUpd.setDescription(desc.getText().toString());
-                                eventUpd.setDate(d, mth, y, h, min);
+                                eventUpd.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
 
                                 progressBar.setVisibility(View.VISIBLE);
                                 database.getReference().child("event").child(event.getKey()).setValue(eventUpd).addOnSuccessListener(unused -> {
@@ -216,25 +214,29 @@ public class EventListAdmin extends AppCompatActivity {
     }
 
     private void dateDialog(Button btn_date, Button btn_time, LocalDateTime editDate) {
-
+        // Date picker
         btn_date.setOnClickListener(v -> {
             DatePickerDialog dialog = new DatePickerDialog(EventListAdmin.this, (view, year, month, day) -> {
-                d = day;
-                mth = month + 1;    //Convert 0-based month (DatePickerDialog) to 1-based (Local
-                y = year;
-                btn_date.setText(d + "/" + mth + "/" + y);
+                dateInfos[0] = day;
+                dateInfos[1] = month+1;   //Convert 0-based month to 1-based (DatePickerDialog -> LocalDateTime)
+                dateInfos[2] = year;
+                String dateText = day + "/" + (month+1) + "/" + year;
+
+                btn_date.setText(dateText);
             }, editDate.getYear(), editDate.getMonthValue()-1, editDate.getDayOfMonth());
             dialog.show();
         });
 
+        // Time picker
         btn_time.setOnClickListener(v -> {
             TimePickerDialog dialog = new TimePickerDialog(EventListAdmin.this, (view, hour, minute) -> {
-                h = hour;
-                min = minute;
-                btn_time.setText(h + ":" + String.format("%02d", min));
+                dateInfos[3] = hour;
+                dateInfos[4] = minute;
+                String timeText = hour + ":" + String.format("%02d", minute);
+
+                btn_time.setText(timeText);
             }, editDate.getHour(), editDate.getMinute(), true);
             dialog.show();
         });
-
     }
 }

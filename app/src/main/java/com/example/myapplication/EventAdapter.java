@@ -9,8 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.jetbrains.annotations.NonBlocking;
-
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
@@ -32,8 +33,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(arrayList.get(position).getDate()), ZoneId.systemDefault());
+
         holder.title.setText(arrayList.get(position).getTitle());
-        holder.subtitle.setText(arrayList.get(position).getPlace());
+        holder.place.setText(arrayList.get(position).getPlace());
+        holder.date.setText(date.getDayOfMonth() + "/" + date.getMonthValue());
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,12 +53,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, subtitle;
+        TextView title, place, date;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.list_title);
-            subtitle = itemView.findViewById(R.id.list_subtitle);
+            place = itemView.findViewById(R.id.list_place);
+            date = itemView.findViewById(R.id.list_date);
         }
     }
 

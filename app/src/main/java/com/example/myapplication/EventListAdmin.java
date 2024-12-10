@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -54,7 +55,7 @@ public class EventListAdmin extends AppCompatActivity {
         database = FirebaseDatabase.getInstance("https://ing-soft-firebase-default-rtdb.europe-west1.firebasedatabase.app/");
 
         // CRUD setting
-        dateInfos = new int[5];
+        dateInfos = new int[] {1, 1, 1, 1, 1};
         FloatingActionButton addButton = findViewById(R.id.addButton);
 
         addButton.setOnClickListener(v -> addOnDB());
@@ -117,6 +118,7 @@ public class EventListAdmin extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ArrayList<Event> arrayList = new ArrayList<>();
 
+                // Show events in recycler view and set adapter
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Event event = dataSnapshot.getValue(Event.class);
                     Objects.requireNonNull(event).setKey(dataSnapshot.getKey());
@@ -130,11 +132,40 @@ public class EventListAdmin extends AppCompatActivity {
                     empty.setVisibility(View.GONE);
                 }
 
-                // Set event adapter
                 EventAdapter adapter = new EventAdapter(EventListAdmin.this, arrayList);
                 recyclerView.setAdapter(adapter);
 
+                // Show details of event on dialog
                 adapter.setOnItemClickListener(event -> {
+                    // Setting view and finding XML elements
+                    View view = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.event_dialog, null);
+                    TextView title = view.findViewById(R.id.title);
+                    TextView place = view.findViewById(R.id.place);
+                    TextView date = view.findViewById(R.id.date);
+                    TextView time = view.findViewById(R.id.time);
+                    TextView desc = view.findViewById(R.id.desc);
+                    LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
+
+                    String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
+                    String timeText = dateEvent.getHour() + ":" + String.format("%02d", dateEvent.getMinute());
+
+                    title.setText(event.getTitle());
+                    place.setText(event.getPlace());
+                    desc.setText(event.getDescription());
+                    date.setText(dateText);
+                    time.setText(timeText);
+
+                    // Create and show the AlertDialog
+                    AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
+                            .setTitle("Event Details")
+                            .setView(view)
+                            .setPositiveButton("Close", (dialog, which) -> dialog.dismiss()) // Close button
+                            .create();
+                    alertDialog.show();
+                });
+
+                // Edit details of event on dialog
+                adapter.setOnEditButtonClickListener(event -> {
                     // Setting view and finding XML elements
                     View view = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.add_event_dialog, null);
                     TextView title = view.findViewById(R.id.titleET);
@@ -164,7 +195,6 @@ public class EventListAdmin extends AppCompatActivity {
                      */
 
                     ProgressBar progressBar = findViewById(R.id.progress_bar);
-
                     AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
                             .setTitle("Edit")
                             .setView(view)
@@ -222,6 +252,13 @@ public class EventListAdmin extends AppCompatActivity {
                 dateInfos[2] = year;
                 String dateText = day + "/" + (month+1) + "/" + year;
 
+                // Ensure month is valid (1-12)
+                if (dateInfos[1] < 1 || dateInfos[1] > 12) {
+                    // If the month is invalid, set to a default valid month, e.g., January (1)
+                    Log.d("DatePickerDialog", "Invalid month: " + dateInfos[1]);
+                }
+
+                Log.d("DatePickerDialog", "Selected date: " + dateInfos[0] + "/" + dateInfos[1] + "/" + dateInfos[2]);
                 btn_date.setText(dateText);
             }, editDate.getYear(), editDate.getMonthValue()-1, editDate.getDayOfMonth());
             dialog.show();

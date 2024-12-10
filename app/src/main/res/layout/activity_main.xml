@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,69 +7,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/login_bg"
+    android:background="#123456"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add event"
-        android:textSize="40dp" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/titleLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <EditText
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textSize="20dp"
-        android:hint="Title"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <EditText
-        android:id="@+id/subtitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textSize="20dp"
-        android:hint="Subtitle"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
-
-    <EditText
-        android:id="@+id/description"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/qrImage"
+        android:layout_width="200dp"
         android:layout_height="200dp"
-        android:inputType="textMultiLine"
-        android:maxLength="1000"
-        android:gravity="start"
-        android:textSize="20dp"
-        android:hint="Description goes here..."
-        app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+        android:layout_centerInParent="true"
+        android:src="@mipmap/ic_launcher"/>
+
+
+    <EditText
+        android:id="@+id/qrText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/qrImage"
+        android:hint="Info da generare" />
 
     <Button
-        android:id="@+id/add_btn"
+        android:id="@+id/grtButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/prim_button"
-        android:padding="18dp"
-        android:text="Create event"
-        android:textColor="@color/white"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_below="@+id/qrText"
+        android:text="Genera" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

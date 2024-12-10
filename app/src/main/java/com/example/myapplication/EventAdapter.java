@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     Context context;
     ArrayList<Event> arrayList;
     OnItemClickListener onItemClickListener;
+    OnEditButtonClickListener onEditButtonClickListener;
 
     public EventAdapter(Context context, ArrayList<Event> arrayList) {
         this.context = context;
@@ -36,8 +38,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(arrayList.get(position).getDate()), ZoneId.systemDefault());
 
         holder.title.setText(arrayList.get(position).getTitle());
-        holder.place.setText(arrayList.get(position).getPlace());
+        //holder.place.setText(arrayList.get(position).getPlace());
         holder.date.setText(date.getDayOfMonth() + "/" + date.getMonthValue());
+
+        holder.editButton.setOnClickListener(v -> {
+            if (onEditButtonClickListener != null) {
+                onEditButtonClickListener.onEditButtonClick(arrayList.get(position));
+            }
+        });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,12 +62,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title, place, date;
+        Button editButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.list_title);
-            place = itemView.findViewById(R.id.list_place);
+            //place = itemView.findViewById(R.id.list_place);
             date = itemView.findViewById(R.id.list_date);
+            editButton = itemView.findViewById(R.id.btn_edit);
         }
     }
 
@@ -69,5 +79,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
     public interface OnItemClickListener {
         void onItemClick(Event event);
+    }
+
+    public void setOnEditButtonClickListener(OnEditButtonClickListener onEditButtonClickListener) {
+        this.onEditButtonClickListener = onEditButtonClickListener;
+    }
+
+    public interface OnEditButtonClickListener {
+        void onEditButtonClick(Event event);
     }
 }

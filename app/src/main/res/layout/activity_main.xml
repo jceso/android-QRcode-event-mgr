@@ -32,4 +32,11 @@
         android:layout_below="@+id/qrText"
         android:text="Genera" />
 
+    <Button
+        android:id="@+id/shareButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/grtButton"
+        android:text="Share" />
+
 </RelativeLayout>

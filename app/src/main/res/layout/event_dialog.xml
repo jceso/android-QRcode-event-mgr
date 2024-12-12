@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -23,11 +24,11 @@
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
         android:padding="15dp"
-        android:drawableStart="@drawable/location"
         android:drawablePadding="10dp"
         android:text="Location"
         android:textSize="20sp"
-        android:textStyle="italic" />
+        android:textStyle="italic"
+        app:drawableStartCompat="@drawable/location" />
 
     <RelativeLayout
         android:id="@+id/date_timeLayout"
@@ -41,7 +42,6 @@
             android:id="@+id/date"
             android:layout_width="150sp"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/date"
             android:drawablePadding="12dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="20dp"
@@ -49,7 +49,8 @@
             android:gravity="start|center_vertical"
             android:text="Date"
             android:textSize="15sp"
-            android:textColor="#575757" />
+            android:textColor="#575757"
+            app:drawableStartCompat="@drawable/date" />
 
         <TextView
             android:id="@+id/time"
@@ -58,13 +59,13 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="10dp"
-            android:drawableEnd="@drawable/time"
             android:drawablePadding="15dp"
             android:gravity="end|center_vertical"
             android:padding="7dp"
             android:text="Time"
             android:textColor="#575757"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            app:drawableEndCompat="@drawable/time" />
     </RelativeLayout>
 
     <TextView

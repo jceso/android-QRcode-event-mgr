@@ -2,7 +2,11 @@ package com.example.myapplication;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +21,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -29,6 +34,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -42,6 +50,7 @@ public class EventListAdmin extends AppCompatActivity {
 
     private FirebaseDatabase database;
     private int[] dateInfos;
+    private Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,23 +160,30 @@ public class EventListAdmin extends AppCompatActivity {
                     ImageView qrImage = view.findViewById(R.id.qrImage);
                     LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
-                    QRGEncoder qrgEncoder = new QRGEncoder(event.getKey(), null, QRGContents.Type.TEXT, 200);
                     String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
                     String timeText = dateEvent.getHour() + ":" + String.format("%02d", dateEvent.getMinute());
+                    QRGEncoder qrgEncoder = new QRGEncoder(event.getKey(), null, QRGContents.Type.TEXT, 200);
+                    bitmap = qrgEncoder.getBitmap();
 
                     title.setText(event.getTitle());
                     place.setText(event.getPlace());
                     desc.setText(event.getDescription());
                     date.setText(dateText);
                     time.setText(timeText);
-                    qrImage.setImageBitmap(qrgEncoder.getBitmap());
+                    qrImage.setImageBitmap(bitmap);
 
                     // Create and show the AlertDialog
                     AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
                             .setTitle("Event Details")
                             .setView(view)
                             .setPositiveButton("Close", (dialog, which) -> dialog.dismiss()) // Close button
-                            .create();
+                            .setNeutralButton("Share", (dialogInterface, which) -> {
+                                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                                shareIntent.putExtra(Intent.EXTRA_STREAM, getUriFromBitmap());
+                                shareIntent.putExtra(Intent.EXTRA_TEXT, "Scan this code to book the event " + event.getTitle());
+                                shareIntent.setType("image/*");
+                                startActivity(Intent.createChooser(shareIntent, "Share via"));
+                            }).create();
                     alertDialog.show();
                 });
 
@@ -282,5 +298,27 @@ public class EventListAdmin extends AppCompatActivity {
             }, editDate.getHour(), editDate.getMinute(), true);
             dialog.show();
         });
+    }
+
+    private Uri getUriFromBitmap() {
+        try {
+            // Create a file to store the QR code image
+            File file = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                "qr_code_" + System.currentTimeMillis() + ".png");
+
+            // Write the bitmap to the file
+            FileOutputStream outStream = new FileOutputStream(file);
+            if (bitmap != null) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 90, outStream);
+                outStream.close();
+            }
+
+            // Get the URI for the file using FileProvider
+            return FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file);
+        } catch (IOException e) {
+            Log.e("QR-Sharing", "getUriFromBitmap: " + e.getMessage());
+        }
+
+        return null;
     }
 }

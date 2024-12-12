@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.firebase.firestore)
     implementation(libs.qr.scanner)
+    implementation(libs.qr.generator)
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
     testImplementation(libs.junit)

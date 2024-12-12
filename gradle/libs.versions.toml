@@ -7,6 +7,7 @@ appcompat = "1.6.1"
 material = "1.10.0"
 activity = "1.8.0"
 qrScanner = "4.3.0"
+qrGenerator = "1.0.5"
 constraintlayout = "2.1.4"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.0.0"
@@ -31,6 +32,7 @@ lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-lived
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 qr-scanner = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "qrScanner" }
+qr-generator = { group = "com.github.androidmads", name = "QRGenerator", version.ref = "qrGenerator" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 

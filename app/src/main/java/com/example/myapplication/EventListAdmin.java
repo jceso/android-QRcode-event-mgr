@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Objects;
+
+import androidmads.library.qrgenearator.QRGContents;
+import androidmads.library.qrgenearator.QRGEncoder;
 
 public class EventListAdmin extends AppCompatActivity {
 
@@ -144,8 +148,10 @@ public class EventListAdmin extends AppCompatActivity {
                     TextView date = view.findViewById(R.id.date);
                     TextView time = view.findViewById(R.id.time);
                     TextView desc = view.findViewById(R.id.desc);
+                    ImageView qrImage = view.findViewById(R.id.qrImage);
                     LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
+                    QRGEncoder qrgEncoder = new QRGEncoder(event.getKey(), null, QRGContents.Type.TEXT, 200);
                     String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
                     String timeText = dateEvent.getHour() + ":" + String.format("%02d", dateEvent.getMinute());
 
@@ -154,6 +160,7 @@ public class EventListAdmin extends AppCompatActivity {
                     desc.setText(event.getDescription());
                     date.setText(dateText);
                     time.setText(timeText);
+                    qrImage.setImageBitmap(qrgEncoder.getBitmap());
 
                     // Create and show the AlertDialog
                     AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)

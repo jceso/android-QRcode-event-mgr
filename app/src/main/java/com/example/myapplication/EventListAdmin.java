@@ -37,6 +37,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -79,10 +81,12 @@ public class EventListAdmin extends AppCompatActivity {
         // Setting view and finding XML elements
         View dialogView = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.add_event_dialog, null);
         EditText title = dialogView.findViewById(R.id.titleET);
-        EditText subtitle = dialogView.findViewById(R.id.subtitleET);
+        EditText place = dialogView.findViewById(R.id.placeET);
         EditText desc = dialogView.findViewById(R.id.descET);
         Button btn_date = dialogView.findViewById(R.id.btn_date);
         Button btn_time = dialogView.findViewById(R.id.btn_time);
+        EditText price = dialogView.findViewById(R.id.priceET);
+        EditText seats = dialogView.findViewById(R.id.seatsET);
 
         // Set date and time picker
         dateDialog(btn_date, btn_time, LocalDateTime.now());
@@ -93,8 +97,8 @@ public class EventListAdmin extends AppCompatActivity {
                 .setPositiveButton("Add", (dialogInterface, which) -> {
                     if (title.getText().toString().isEmpty())
                         title.setError("Title is required");
-                    else if (subtitle.getText().toString().isEmpty())
-                        subtitle.setError("Subtitle is required");
+                    else if (place.getText().toString().isEmpty())
+                        place.setError("Place is required");
                     else if (desc.getText().toString().isEmpty())
                         desc.setError("Description is required");
                     else {
@@ -103,9 +107,11 @@ public class EventListAdmin extends AppCompatActivity {
 
                         Event event = new Event();
                         event.setTitle(title.getText().toString());
-                        event.setPlace(subtitle.getText().toString());
+                        event.setPlace(place.getText().toString());
                         event.setDescription(desc.getText().toString());
                         event.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
+                        event.setPrice(Float.parseFloat(price.getText().toString()));
+                        event.setSeats(Integer.parseInt(seats.getText().toString()));
 
                         database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
                             progressBar.setVisibility(View.GONE);
@@ -145,6 +151,9 @@ public class EventListAdmin extends AppCompatActivity {
                     empty.setVisibility(View.GONE);
                 }
 
+                DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+                symbols.setDecimalSeparator(',');
+                ProgressBar progressBar = findViewById(R.id.progress_bar);
                 EventAdapter adapter = new EventAdapter(EventListAdmin.this, arrayList);
                 recyclerView.setAdapter(adapter);
 
@@ -157,6 +166,8 @@ public class EventListAdmin extends AppCompatActivity {
                     TextView date = view.findViewById(R.id.date);
                     TextView time = view.findViewById(R.id.time);
                     TextView desc = view.findViewById(R.id.desc);
+                    TextView price = view.findViewById(R.id.price);
+                    TextView seats = view.findViewById(R.id.seats);
                     ImageView qrImage = view.findViewById(R.id.qrImage);
                     LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
@@ -170,6 +181,11 @@ public class EventListAdmin extends AppCompatActivity {
                     desc.setText(event.getDescription());
                     date.setText(dateText);
                     time.setText(timeText);
+                    price.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()));
+                    if (event.getSeats() == 0)
+                        seats.setText("No limits");
+                    else
+                        seats.setHint(String.valueOf(event.getSeats()));
                     qrImage.setImageBitmap(bitmap);
 
                     // Create and show the AlertDialog
@@ -177,13 +193,24 @@ public class EventListAdmin extends AppCompatActivity {
                             .setTitle("Event Details")
                             .setView(view)
                             .setPositiveButton("Close", (dialog, which) -> dialog.dismiss()) // Close button
-                            .setNeutralButton("Share", (dialogInterface, which) -> {
+                            .setNeutralButton("Share QR", (dialogInterface, which) -> {
                                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                                 shareIntent.putExtra(Intent.EXTRA_STREAM, getUriFromBitmap());
                                 shareIntent.putExtra(Intent.EXTRA_TEXT, "Scan this code to book the event " + event.getTitle());
                                 shareIntent.setType("image/*");
                                 startActivity(Intent.createChooser(shareIntent, "Share via"));
-                            }).create();
+                            }).setNegativeButton("Delete", (dialogInterface, which) -> {
+                                progressBar.setVisibility(View.VISIBLE);
+
+                                database.getReference().child("event").child(event.getKey()).removeValue().addOnSuccessListener(unused -> {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(EventListAdmin.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                                }).addOnFailureListener(e -> {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(EventListAdmin.this, "There was an error while deleting data", Toast.LENGTH_SHORT).show();
+                                });
+                            })
+                            .create();
                     alertDialog.show();
                 });
 
@@ -192,46 +219,59 @@ public class EventListAdmin extends AppCompatActivity {
                     // Setting view and finding XML elements
                     View view = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.add_event_dialog, null);
                     TextView title = view.findViewById(R.id.titleET);
-                    TextView subtitle = view.findViewById(R.id.subtitleET);
+                    TextView place = view.findViewById(R.id.placeET);
                     TextView desc = view.findViewById(R.id.descET);
                     Button btn_date = view.findViewById(R.id.btn_date);
                     Button btn_time = view.findViewById(R.id.btn_time);
-                    LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
+                    EditText price = view.findViewById(R.id.priceET);
+                    EditText seats = view.findViewById(R.id.seatsET);
+                    LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
-                    String btnDateText = date.getDayOfMonth() + "/" + date.getMonthValue() + "/" + date.getYear();
-                    String btnTimeText = date.getHour() + ":" + String.format("%02d", date.getMinute());
-                    dateDialog(btn_date, btn_time, date);
+                    String btnDateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
+                    String btnTimeText = dateEvent.getHour() + ":" + String.format("%02d", dateEvent.getMinute());
+                    dateDialog(btn_date, btn_time, dateEvent);
 
                     title.setText(event.getTitle());
-                    subtitle.setText(event.getPlace());
+                    place.setText(event.getPlace());
                     desc.setText(event.getDescription());
                     btn_date.setText(btnDateText);
                     btn_time.setText(btnTimeText);
+                    price.setHint(String.valueOf(event.getPrice()));
+                    if (event.getSeats() == 0)
+                        seats.setHint("No limits");
+                    else
+                        seats.setHint(String.valueOf(event.getSeats()));
 
-                    /*
-                        <!-- res/values/strings.xml -->
-                        <string name="date_format">%1$d/%2$d/%3$d</string>
-                        <string name="time_format">%1$d:%2$02d</string>
-
-                        btn_date.setText(getString(R.string.date_format, date.getDayOfMonth(), date.getMonthValue(), date.getYear()));
-                        btn_time.setText(getString(R.string.time_format, date.getHour(), date.getMinute()));
-                     */
-
-                    ProgressBar progressBar = findViewById(R.id.progress_bar);
                     AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
                             .setTitle("Edit")
                             .setView(view)
                             .setPositiveButton("Save", (dialogInterface, which) -> {
                                 if (title.getText().toString().isEmpty())
                                     title.setError("Title is required");
-                                if (subtitle.getText().toString().isEmpty())
-                                    subtitle.setError("Subtitle is required");
+                                if (place.getText().toString().isEmpty())
+                                    place.setError("Place is required");
                                 if (desc.getText().toString().isEmpty())
                                     desc.setError("Description is required");
 
                                 Event eventUpd = new Event();
+
+                                // Price setting
+                                if (!price.getText().toString().isEmpty())
+                                    eventUpd.setPrice(Float.parseFloat(price.getText().toString()));
+                                else
+                                    eventUpd.setPrice(Float.parseFloat(price.getHint().toString()));
+
+                                // Availability setting
+                                if (!seats.getText().toString().isEmpty())
+                                    eventUpd.setSeats(Integer.parseInt(seats.getText().toString()));
+                                else if (seats.getHint() == "No limits")
+                                    eventUpd.setSeats(0);
+                                else
+                                    eventUpd.setSeats(Integer.parseInt(seats.getHint().toString()));
+
+                                // Rest of event setting
                                 eventUpd.setTitle(title.getText().toString());
-                                eventUpd.setPlace(subtitle.getText().toString());
+                                eventUpd.setPlace(place.getText().toString());
                                 eventUpd.setDescription(desc.getText().toString());
                                 eventUpd.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
 
@@ -244,7 +284,8 @@ public class EventListAdmin extends AppCompatActivity {
                                     progressBar.setVisibility(View.GONE);
                                     Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
                                 });
-                            }).setNeutralButton("Close", (dialogInterface, which) -> dialogInterface.dismiss()).setNegativeButton("Delete", (dialogInterface, which) -> {
+                            }).setNeutralButton("Close", (dialogInterface, which) -> dialogInterface.dismiss())
+                            .setNegativeButton("Delete", (dialogInterface, which) -> {
                                 progressBar.setVisibility(View.VISIBLE);
 
                                 database.getReference().child("event").child(event.getKey()).removeValue().addOnSuccessListener(unused -> {
@@ -267,6 +308,8 @@ public class EventListAdmin extends AppCompatActivity {
     }
 
     private void dateDialog(Button btn_date, Button btn_time, LocalDateTime editDate) {
+        dateInfos = new int[] { editDate.getDayOfMonth(), editDate.getMonthValue(), editDate.getYear(), editDate.getHour(), editDate.getMinute() };
+
         // Date picker
         btn_date.setOnClickListener(v -> {
             DatePickerDialog dialog = new DatePickerDialog(EventListAdmin.this, (view, year, month, day) -> {

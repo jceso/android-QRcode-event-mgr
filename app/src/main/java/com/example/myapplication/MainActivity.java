@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     private Uri getUriFromBitmap() {
         try {
             // Create a file to store the QR code image

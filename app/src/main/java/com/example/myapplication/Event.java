@@ -2,17 +2,15 @@ package com.example.myapplication;
 
 import android.util.Log;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class Event {
     private String key, title, place, description;
     private long date;
+
+    private float price;
+    private int max_seats, num_subs;
 
     public Event() { }
 
@@ -56,5 +54,24 @@ public class Event {
         this.description = description;
     }
 
+    public float getPrice() {
+        return this.price;
+    }
+    public void setPrice(float price) {
+        this.price = price;
+    }
 
+    public int getSeats() {
+        return this.max_seats;
+    }
+    public void setSeats(int max_seats) {
+        this.max_seats = max_seats;
+    }
+
+    public int getNum_subs() {
+        return num_subs;
+    }
+    public void setNum_subs(int num_subs) {
+        this.num_subs = num_subs;
+    }
 }

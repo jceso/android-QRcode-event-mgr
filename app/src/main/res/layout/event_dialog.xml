@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
     <TextView
         android:id="@+id/title"
@@ -80,13 +80,50 @@
         android:text="Description"
         android:textSize="20sp" />
 
+    <RelativeLayout
+        android:id="@+id/infosLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/desc"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp">
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="130sp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:drawablePadding="5dp"
+            android:padding="7dp"
+            android:gravity="start|center_vertical"
+            android:text="Free"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/money" />
+
+        <TextView
+            android:id="@+id/seats"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="10dp"
+            android:drawablePadding="5dp"
+            android:gravity="end|center_vertical"
+            android:padding="7dp"
+            android:text="Seats"
+            android:textColor="#575757"
+            android:textSize="15sp"
+            app:drawableEndCompat="@drawable/numbers" />
+    </RelativeLayout>
+
     <ImageView
         android:id="@+id/qrImage"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_below="@+id/desc"
+        android:layout_below="@+id/infosLayout"
         android:layout_centerHorizontal="true"
-        android:layout_margin="30dp"
-        android:contentDescription="QR code of the event"/>
+        android:layout_margin="20dp"
+        android:contentDescription="QR code of the event" />
 
 </RelativeLayout>

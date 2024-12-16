@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/login_bg"
+    android:background="#123456"
     tools:context=".QrScanner">
 
     <Button

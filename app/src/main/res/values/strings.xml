@@ -20,4 +20,14 @@
     <string name="scan_code">Scan a QR Code</string>
     <string name="logout">Logout</string>
     <string name="booked_list">Already booked events</string>
+    <string name="title">Title</string>
+    <string name="location">Location</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="description">Description</string>
+    <string name="price">Price:</string>
+    <string name="free">Free</string>
+    <string name="availability">Availability:</string>
+    <string name="no_limits">No limits</string>
+    <string name="qr_code">QR code of the event</string>
 </resources>

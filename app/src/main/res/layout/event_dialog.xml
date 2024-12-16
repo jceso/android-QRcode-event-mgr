@@ -12,7 +12,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
         android:padding="15dp"
-        android:text="Title"
+        android:text="@string/title"
         android:textSize="25sp"
         android:textStyle="bold" />
 
@@ -25,7 +25,7 @@
         android:layout_marginEnd="25dp"
         android:padding="15dp"
         android:drawablePadding="10dp"
-        android:text="Location"
+        android:text="@string/location"
         android:textSize="20sp"
         android:textStyle="italic"
         app:drawableStartCompat="@drawable/location" />
@@ -47,7 +47,7 @@
             android:layout_marginEnd="20dp"
             android:padding="7dp"
             android:gravity="start|center_vertical"
-            android:text="Date"
+            android:text="@string/date"
             android:textSize="15sp"
             android:textColor="#575757"
             app:drawableStartCompat="@drawable/date" />
@@ -62,7 +62,7 @@
             android:drawablePadding="15dp"
             android:gravity="end|center_vertical"
             android:padding="7dp"
-            android:text="Time"
+            android:text="@string/time"
             android:textColor="#575757"
             android:textSize="15sp"
             app:drawableEndCompat="@drawable/time" />
@@ -77,7 +77,7 @@
         android:layout_marginEnd="10dp"
         android:gravity="start"
         android:padding="15dp"
-        android:text="Description"
+        android:text="@string/description"
         android:textSize="20sp" />
 
     <RelativeLayout
@@ -96,7 +96,7 @@
             android:drawablePadding="5dp"
             android:padding="7dp"
             android:gravity="start|center_vertical"
-            android:text="Free"
+            android:text="@string/free"
             android:textSize="15sp"
             android:textStyle="bold"
             app:drawableStartCompat="@drawable/money" />
@@ -111,7 +111,7 @@
             android:drawablePadding="5dp"
             android:gravity="end|center_vertical"
             android:padding="7dp"
-            android:text="Seats"
+            android:text="@string/no_limits"
             android:textColor="#575757"
             android:textSize="15sp"
             app:drawableEndCompat="@drawable/numbers" />
@@ -124,6 +124,6 @@
         android:layout_below="@+id/infosLayout"
         android:layout_centerHorizontal="true"
         android:layout_margin="20dp"
-        android:contentDescription="QR code of the event" />
+        android:contentDescription="@string/qr_code" />
 
 </RelativeLayout>

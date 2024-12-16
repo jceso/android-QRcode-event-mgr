@@ -11,7 +11,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="5dp"
-        android:hint="Title"
+        android:hint="@string/title"
         android:textSize="25sp"
         android:textStyle="bold"
         android:inputType="textCapSentences"/>
@@ -26,8 +26,8 @@
         android:layout_marginTop="10dp"
         android:padding="16dp"
         android:drawablePadding="16dp"
-        android:drawableRight="@drawable/location"
-        android:hint="Location"
+        android:drawableEnd="@drawable/location"
+        android:hint="@string/location"
         android:textSize="20sp"
         android:textStyle="italic"
         android:inputType="textCapSentences" />
@@ -50,7 +50,7 @@
             android:layout_marginEnd="20dp"
             android:padding="7dp"
             android:gravity="start|center_vertical"
-            android:text="Date"
+            android:text="@string/date"
             android:textSize="15sp"
             android:textColor="#575757" />
 
@@ -65,7 +65,7 @@
             android:drawablePadding="15dp"
             android:gravity="end|center_vertical"
             android:padding="7dp"
-            android:text="Time"
+            android:text="@string/time"
             android:textColor="#575757"
             android:textSize="15sp" />
     </RelativeLayout>
@@ -79,7 +79,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginTop="15dp"
         android:gravity="start"
-        android:hint="Description"
+        android:hint="@string/description"
         android:textSize="20sp"
         android:inputType="textCapSentences|textMultiLine" />
 
@@ -94,13 +94,13 @@
 
         <TextView
             android:id="@+id/priceTxt"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_marginStart="70dp"
             android:layout_toStartOf="@+id/priceET"
             android:gravity="end|center_vertical"
             android:padding="7dp"
-            android:text="Price: "
+            android:text="@string/price"
             android:textColor="#575757"
             android:textSize="20sp" />
 
@@ -108,25 +108,25 @@
             android:id="@+id/priceET"
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="70dp"
+            android:layout_marginEnd="35dp"
             android:layout_alignParentEnd="true"
             android:drawableEnd="@drawable/money"
             android:drawablePadding="5dp"
             android:padding="7dp"
-            android:hint="Free"
+            android:hint="@string/free"
             android:textColor="#575757"
             android:textSize="20sp"
             android:inputType="numberDecimal" />
 
         <TextView
             android:id="@+id/seatsTxt"
-            android:layout_width="130dp"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_below="@id/priceTxt"
             android:layout_toStartOf="@+id/seatsET"
             android:gravity="end|center_vertical"
             android:padding="7dp"
-            android:text="Availability: "
+            android:text="@string/availability"
             android:textColor="#575757"
             android:textSize="20sp" />
 
@@ -134,13 +134,13 @@
             android:id="@+id/seatsET"
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="70dp"
+            android:layout_marginEnd="35dp"
             android:layout_below="@id/priceET"
             android:layout_alignParentEnd="true"
             android:drawableEnd="@drawable/numbers"
             android:drawablePadding="5dp"
             android:padding="7dp"
-            android:hint="No limits"
+            android:hint="@string/no_limits"
             android:textColor="#575757"
             android:textSize="20sp"
             android:inputType="number" />

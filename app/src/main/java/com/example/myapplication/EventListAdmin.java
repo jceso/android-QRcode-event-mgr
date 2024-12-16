@@ -104,14 +104,25 @@ public class EventListAdmin extends AppCompatActivity {
                     else {
                         ProgressBar progressBar = findViewById(R.id.progress_bar);
                         progressBar.setVisibility(View.VISIBLE);
-
                         Event event = new Event();
+
+                        // Price setting
+                        if (!price.getText().toString().isEmpty())
+                            event.setPrice(Float.parseFloat(price.getText().toString()));
+                        else
+                            event.setPrice(0);
+
+                        // Availability setting
+                        if (!seats.getText().toString().isEmpty())
+                            event.setSeats(Integer.parseInt(seats.getText().toString()));
+                        else
+                            event.setSeats(0);
+
+                        // Rest of event setting
                         event.setTitle(title.getText().toString());
                         event.setPlace(place.getText().toString());
                         event.setDescription(desc.getText().toString());
                         event.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
-                        event.setPrice(Float.parseFloat(price.getText().toString()));
-                        event.setSeats(Integer.parseInt(seats.getText().toString()));
 
                         database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
                             progressBar.setVisibility(View.GONE);
@@ -181,7 +192,10 @@ public class EventListAdmin extends AppCompatActivity {
                     desc.setText(event.getDescription());
                     date.setText(dateText);
                     time.setText(timeText);
-                    price.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()));
+                    if (event.getPrice() == 0)
+                        price.setText("Free");
+                    else
+                        price.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()));
                     if (event.getSeats() == 0)
                         seats.setText("No limits");
                     else
@@ -236,7 +250,10 @@ public class EventListAdmin extends AppCompatActivity {
                     desc.setText(event.getDescription());
                     btn_date.setText(btnDateText);
                     btn_time.setText(btnTimeText);
-                    price.setHint(String.valueOf(event.getPrice()));
+                    if (event.getPrice() == 0)
+                        price.setHint("Free");
+                    else
+                        price.setHint(String.valueOf(event.getPrice()));
                     if (event.getSeats() == 0)
                         seats.setHint("No limits");
                     else
@@ -258,6 +275,8 @@ public class EventListAdmin extends AppCompatActivity {
                                 // Price setting
                                 if (!price.getText().toString().isEmpty())
                                     eventUpd.setPrice(Float.parseFloat(price.getText().toString()));
+                                else if (price.getHint() == "Free")
+                                    eventUpd.setSeats(0);
                                 else
                                     eventUpd.setPrice(Float.parseFloat(price.getHint().toString()));
 

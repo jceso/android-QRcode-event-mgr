@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#123456"
+    tools:context=".EventBooking">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:padding="15dp"
+        android:text="@string/title"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:padding="15dp"
+        android:drawablePadding="10dp"
+        android:text="@string/location"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        android:textColor="@color/white"
+        app:drawableStartCompat="@drawable/location" />
+
+    <RelativeLayout
+        android:id="@+id/date_timeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/place"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp">
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="150sp"
+            android:layout_height="wrap_content"
+            android:drawablePadding="12dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:padding="7dp"
+            android:gravity="start|center_vertical"
+            android:text="@string/date"
+            android:textSize="15sp"
+            android:textColor="#CCCCCC"
+            app:drawableStartCompat="@drawable/date" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="120sp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="10dp"
+            android:drawablePadding="15dp"
+            android:gravity="end|center_vertical"
+            android:padding="7dp"
+            android:text="@string/time"
+            android:textColor="#CCCCCC"
+            android:textSize="15sp"
+            app:drawableEndCompat="@drawable/time" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date_timeLayout"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="start"
+        android:padding="15dp"
+        android:text="@string/description"
+        android:textSize="20sp"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/desc"
+        android:padding="15dp"
+        android:gravity="center"
+        android:text="@string/free"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/shopping_cart" />
+
+</RelativeLayout>

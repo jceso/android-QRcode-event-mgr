@@ -28,7 +28,11 @@ public class QrScanner extends AppCompatActivity {
                     Toast.makeText(QrScanner.this, "Cancelled", Toast.LENGTH_LONG).show();
                 else {
                     scannedValue.setText(result.getContents());
-
+                    // Pass the scanned value to EventBooking activity
+                    Intent intent = new Intent(getApplicationContext(), EventBooking.class);
+                    intent.putExtra("scannedQRCode", result.getContents()); // Put the scanned QR code content in the intent
+                    startActivity(intent);
+                    finish();
                 }
             });
 

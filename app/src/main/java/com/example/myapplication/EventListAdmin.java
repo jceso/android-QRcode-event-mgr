@@ -1,7 +1,10 @@
 package com.example.myapplication;
 
+import static java.security.AccessController.getContext;
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -91,51 +94,67 @@ public class EventListAdmin extends AppCompatActivity {
         // Set date and time picker
         dateDialog(btn_date, btn_time, LocalDateTime.now());
 
-        AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
+        AlertDialog addDialog = new AlertDialog.Builder(EventListAdmin.this)
                 .setTitle("Add event")
-                .setView(dialogView)
-                .setPositiveButton("Add", (dialogInterface, which) -> {
-                    if (title.getText().toString().isEmpty())
-                        title.setError("Title is required");
-                    else if (place.getText().toString().isEmpty())
-                        place.setError("Place is required");
-                    else if (desc.getText().toString().isEmpty())
-                        desc.setError("Description is required");
-                    else {
-                        ProgressBar progressBar = findViewById(R.id.progress_bar);
-                        progressBar.setVisibility(View.VISIBLE);
-                        Event event = new Event();
-
-                        // Price setting
-                        if (!price.getText().toString().isEmpty())
-                            event.setPrice(Float.parseFloat(price.getText().toString()));
-                        else
-                            event.setPrice(0);
-
-                        // Availability setting
-                        if (!seats.getText().toString().isEmpty())
-                            event.setSeats(Integer.parseInt(seats.getText().toString()));
-                        else
-                            event.setSeats(0);
-
-                        // Rest of event setting
-                        event.setTitle(title.getText().toString());
-                        event.setPlace(place.getText().toString());
-                        event.setDescription(desc.getText().toString());
-                        event.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
-
-                        database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
-                            progressBar.setVisibility(View.GONE);
-                            dialogInterface.dismiss();
-                            Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
-                        }).addOnFailureListener(e -> {
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                }).setNeutralButton("Cancel", (dialogInterface, which) -> dialogInterface.dismiss())
+                .setView(dialogView) // This is your custom dialog view
+                .setCancelable(false)
+                .setPositiveButton("Create Event", null) // We will handle the click manually
+                .setNeutralButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .create();
-        alertDialog.show();
+
+
+        // Set a listener for the positive button after the dialog is created
+        addDialog.setOnShowListener(d -> {
+            addDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+                // Check if title, place, and description are empty
+                if (title.getText().toString().trim().isEmpty())
+                    title.setError("Title is required");
+                else if (place.getText().toString().trim().isEmpty())
+                    place.setError("Place is required");
+                else if (btn_date.getText().toString().equals("Date"))
+                    btn_date.setError("Date is required");
+                else if (btn_time.getText().toString().equals("Time"))
+                    btn_time.setError("Time is required");
+                else if (desc.getText().toString().trim().isEmpty())
+                    desc.setError("Description is required");
+                else {
+                    // All fields are filled in, so create the event
+                    ProgressBar progressBar = findViewById(R.id.progress_bar);
+                    progressBar.setVisibility(View.VISIBLE);
+                    Event event = new Event();
+
+                    // Price setting
+                    if (!price.getText().toString().isEmpty())
+                        event.setPrice(Float.parseFloat(price.getText().toString()));
+                    else
+                        event.setPrice(0);
+
+                    // Availability setting
+                    if (!seats.getText().toString().isEmpty())
+                        event.setSeats(Integer.parseInt(seats.getText().toString()));
+                    else
+                        event.setSeats(0);
+
+                    // Rest of event setting
+                    event.setTitle(title.getText().toString());
+                    event.setPlace(place.getText().toString());
+                    event.setDescription(desc.getText().toString());
+                    event.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
+
+                    database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
+                    }).addOnFailureListener(e -> {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
+                    });
+
+                    addDialog.dismiss(); // Close the dialog after event creation
+                }
+            });
+        });
+
+        addDialog.show();
     }
 
     private void editDeleteEvent() {
@@ -171,15 +190,15 @@ public class EventListAdmin extends AppCompatActivity {
                 // Show details of event on dialog
                 adapter.setOnItemClickListener(event -> {
                     // Setting view and finding XML elements
-                    View view = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.event_dialog, null);
-                    TextView title = view.findViewById(R.id.title);
-                    TextView place = view.findViewById(R.id.place);
-                    TextView date = view.findViewById(R.id.date);
-                    TextView time = view.findViewById(R.id.time);
-                    TextView desc = view.findViewById(R.id.desc);
-                    TextView price = view.findViewById(R.id.price);
-                    TextView seats = view.findViewById(R.id.seats);
-                    ImageView qrImage = view.findViewById(R.id.qrImage);
+                    View dialogView = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.event_dialog, null);
+                    TextView title = dialogView.findViewById(R.id.title);
+                    TextView place = dialogView.findViewById(R.id.place);
+                    TextView date = dialogView.findViewById(R.id.date);
+                    TextView time = dialogView.findViewById(R.id.time);
+                    TextView desc = dialogView.findViewById(R.id.desc);
+                    TextView price = dialogView.findViewById(R.id.price);
+                    TextView seats = dialogView.findViewById(R.id.seats);
+                    ImageView qrImage = dialogView.findViewById(R.id.qrImage);
                     LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
                     String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
@@ -202,10 +221,9 @@ public class EventListAdmin extends AppCompatActivity {
                         seats.setHint(String.valueOf(event.getSeats()));
                     qrImage.setImageBitmap(bitmap);
 
-                    // Create and show the AlertDialog
                     AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
                             .setTitle("Event Details")
-                            .setView(view)
+                            .setView(dialogView)
                             .setPositiveButton("Close", (dialog, which) -> dialog.dismiss()) // Close button
                             .setNeutralButton("Share QR", (dialogInterface, which) -> {
                                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -231,14 +249,14 @@ public class EventListAdmin extends AppCompatActivity {
                 // Edit details of event on dialog
                 adapter.setOnEditButtonClickListener(event -> {
                     // Setting view and finding XML elements
-                    View view = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.add_event_dialog, null);
-                    TextView title = view.findViewById(R.id.titleET);
-                    TextView place = view.findViewById(R.id.placeET);
-                    TextView desc = view.findViewById(R.id.descET);
-                    Button btn_date = view.findViewById(R.id.btn_date);
-                    Button btn_time = view.findViewById(R.id.btn_time);
-                    EditText price = view.findViewById(R.id.priceET);
-                    EditText seats = view.findViewById(R.id.seatsET);
+                    View dialogView = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.add_event_dialog, null);
+                    TextView title = dialogView.findViewById(R.id.titleET);
+                    TextView place = dialogView.findViewById(R.id.placeET);
+                    TextView desc = dialogView.findViewById(R.id.descET);
+                    Button btn_date = dialogView.findViewById(R.id.btn_date);
+                    Button btn_time = dialogView.findViewById(R.id.btn_time);
+                    EditText price = dialogView.findViewById(R.id.priceET);
+                    EditText seats = dialogView.findViewById(R.id.seatsET);
                     LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
                     String btnDateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
@@ -259,17 +277,37 @@ public class EventListAdmin extends AppCompatActivity {
                     else
                         seats.setHint(String.valueOf(event.getSeats()));
 
-                    AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
-                            .setTitle("Edit")
-                            .setView(view)
-                            .setPositiveButton("Save", (dialogInterface, which) -> {
-                                if (title.getText().toString().isEmpty())
-                                    title.setError("Title is required");
-                                if (place.getText().toString().isEmpty())
-                                    place.setError("Place is required");
-                                if (desc.getText().toString().isEmpty())
-                                    desc.setError("Description is required");
 
+                    AlertDialog editDialog = new AlertDialog.Builder(EventListAdmin.this)
+                            .setTitle("Edit event")
+                            .setView(dialogView) // This is your custom dialog view
+                            .setCancelable(false)
+                            .setPositiveButton("Save", null) // We will handle the click manually
+                            .setNeutralButton("Close", (dialogInterface, which) -> dialogInterface.dismiss())
+                            .setNegativeButton("Delete", (dialogInterface, which) -> {
+                                progressBar.setVisibility(View.VISIBLE);
+
+                                database.getReference().child("event").child(event.getKey()).removeValue().addOnSuccessListener(unused -> {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(EventListAdmin.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                                }).addOnFailureListener(e -> {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(EventListAdmin.this, "There was an error while deleting data", Toast.LENGTH_SHORT).show();
+                                });
+                            }).create();
+
+                    // Set a listener for the positive button after the dialog is created
+                    editDialog.setOnShowListener(d -> {
+                        editDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+                            // Check if title, place, and description are empty
+                            if (title.getText().toString().trim().isEmpty())
+                                title.setError("Title is required");
+                            else if (place.getText().toString().trim().isEmpty())
+                                place.setError("Place is required");
+                            else if (desc.getText().toString().trim().isEmpty())
+                                desc.setError("Description is required");
+                            else {
+                                progressBar.setVisibility(View.VISIBLE);
                                 Event eventUpd = new Event();
 
                                 // Price setting
@@ -294,28 +332,20 @@ public class EventListAdmin extends AppCompatActivity {
                                 eventUpd.setDescription(desc.getText().toString());
                                 eventUpd.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
 
-                                progressBar.setVisibility(View.VISIBLE);
                                 database.getReference().child("event").child(event.getKey()).setValue(eventUpd).addOnSuccessListener(unused -> {
                                     progressBar.setVisibility(View.GONE);
-                                    dialogInterface.dismiss();
                                     Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
                                 }).addOnFailureListener(e -> {
                                     progressBar.setVisibility(View.GONE);
                                     Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
                                 });
-                            }).setNeutralButton("Close", (dialogInterface, which) -> dialogInterface.dismiss())
-                            .setNegativeButton("Delete", (dialogInterface, which) -> {
-                                progressBar.setVisibility(View.VISIBLE);
 
-                                database.getReference().child("event").child(event.getKey()).removeValue().addOnSuccessListener(unused -> {
-                                    progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(EventListAdmin.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
-                                }).addOnFailureListener(e -> {
-                                    progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(EventListAdmin.this, "There was an error while deleting data", Toast.LENGTH_SHORT).show();
-                                });
-                            }).create();
-                    alertDialog.show();
+                                editDialog.dismiss();
+                            }
+                        });
+                    });
+
+                    editDialog.show();
                 });
             }
 

@@ -103,16 +103,13 @@ public class Register extends AppCompatActivity {
                                     Map<String,Object> userInfo = new HashMap<>();
                                     userInfo.put("UserEmail", email);
                                     userInfo.put("PhoneNumber", phone);
-                                    //Specify if user is admin
                                     userInfo.put("isAdmin", "0");   //On FireStore change to 1 in case of admin
                                     dr.set(userInfo);
 
                                     startActivity(new Intent(getApplicationContext(), QrScanner.class));
                                     finish();
-                                } else {
-                                    // If sign in fails, display a message to the user.
+                                } else
                                     Toast.makeText(Register.this, "Authentication failed!", Toast.LENGTH_SHORT).show();
-                                }
                             }
                         });
             }

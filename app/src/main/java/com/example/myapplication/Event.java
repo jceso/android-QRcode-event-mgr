@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public class Event {
-    private String key, title, place, description;
+    private String key, title, place, description, organizer;
     private long date;
 
     private float price;

@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
     Context context;
     ArrayList<Event> arrayList;
-    OnItemClickListener onItemClickListener;
-    OnEditButtonClickListener onEditButtonClickListener;
+    OnEventListener onEventClickListener;
+    OnEditListener onEditClickListener;
 
     public EventAdapter(Context context, ArrayList<Event> arrayList) {
         this.context = context;
@@ -42,15 +42,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         holder.date.setText(date.getDayOfMonth() + "/" + date.getMonthValue());
 
         holder.editButton.setOnClickListener(v -> {
-            if (onEditButtonClickListener != null) {
-                onEditButtonClickListener.onEditButtonClick(arrayList.get(position));
+            if (onEditClickListener != null) {
+                onEditClickListener.onEditButtonClick(arrayList.get(position));
             }
         });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onItemClickListener.onItemClick(arrayList.get(position));
+                onEventClickListener.onItemClick(arrayList.get(position));
             }
         });
     }
@@ -73,19 +73,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         }
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+    public void setOnEventListener(OnEventListener onEventListener) {
+        this.onEventClickListener = onEventListener;
     }
 
-    public interface OnItemClickListener {
+    public interface OnEventListener {
         void onItemClick(Event event);
     }
 
-    public void setOnEditButtonClickListener(OnEditButtonClickListener onEditButtonClickListener) {
-        this.onEditButtonClickListener = onEditButtonClickListener;
+    public void setOnEditListener(OnEditListener onEditListener) {
+        this.onEditClickListener = onEditListener;
     }
 
-    public interface OnEditButtonClickListener {
+    public interface OnEditListener {
         void onEditButtonClick(Event event);
     }
 }

@@ -61,7 +61,7 @@ public class EventListAdmin extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_event_list);
+        setContentView(R.layout.activity_event_list_admin);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -188,7 +188,7 @@ public class EventListAdmin extends AppCompatActivity {
                 recyclerView.setAdapter(adapter);
 
                 // Show details of event on dialog
-                adapter.setOnItemClickListener(event -> {
+                adapter.setOnEventListener(event -> {
                     // Setting view and finding XML elements
                     View dialogView = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.event_dialog, null);
                     TextView title = dialogView.findViewById(R.id.title);
@@ -247,7 +247,7 @@ public class EventListAdmin extends AppCompatActivity {
                 });
 
                 // Edit details of event on dialog
-                adapter.setOnEditButtonClickListener(event -> {
+                adapter.setOnEditListener(event -> {
                     // Setting view and finding XML elements
                     View dialogView = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.add_event_dialog, null);
                     TextView title = dialogView.findViewById(R.id.titleET);

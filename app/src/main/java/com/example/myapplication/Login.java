@@ -119,7 +119,7 @@ public class Login extends AppCompatActivity {
                 Log.d("TAG", "OnSuccess: " + documentSnapshot.getData());
                 if (documentSnapshot.getString("isAdmin") == "1") {
                     //User is admin
-                    startActivity(new Intent(getApplicationContext(), Admin.class));
+                    startActivity(new Intent(getApplicationContext(), EventListAdmin.class));
                     finish();
                 } else {
                     //Normal user

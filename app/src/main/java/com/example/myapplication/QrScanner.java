@@ -26,8 +26,10 @@ public class QrScanner extends AppCompatActivity {
             registerForActivityResult(new ScanContract(), result -> {
                 if (result.getContents() == null)
                     Toast.makeText(QrScanner.this, "Cancelled", Toast.LENGTH_LONG).show();
-                else
+                else {
                     scannedValue.setText(result.getContents());
+
+                }
             });
 
     @Override

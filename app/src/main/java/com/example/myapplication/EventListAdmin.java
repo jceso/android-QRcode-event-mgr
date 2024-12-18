@@ -1,7 +1,5 @@
 package com.example.myapplication;
 
-import static java.security.AccessController.getContext;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -39,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,7 +56,8 @@ import androidmads.library.qrgenearator.QRGEncoder;
 public class EventListAdmin extends AppCompatActivity {
 
     private FirebaseDatabase database;
-    FirebaseUser user;
+    private FirebaseFirestore fstore;
+    private FirebaseUser user;
     private int[] dateInfos;
     private Bitmap bitmap;
 
@@ -76,16 +76,17 @@ public class EventListAdmin extends AppCompatActivity {
         FirebaseApp.initializeApp(EventListAdmin.this);
         database = FirebaseDatabase.getInstance("https://ing-soft-firebase-default-rtdb.europe-west1.firebasedatabase.app/");
         user = FirebaseAuth.getInstance().getCurrentUser();
+        fstore = FirebaseFirestore.getInstance();
+
+        // Setting basic buttons
+        Button logout_btn = findViewById(R.id.logout_btn);
+        logout_btn.setOnClickListener(v -> BasicButtons.handleLogoutButton(EventListAdmin.this));
+        Button name_btn = findViewById(R.id.user);
+        BasicButtons.checkUserAndSetNameButton(EventListAdmin.this, name_btn);
 
         // CRUD setting
         dateInfos = new int[] {1, 1, 1, 1, 1};
         FloatingActionButton addButton = findViewById(R.id.addButton);
-        TextView textEmail = findViewById(R.id.user_email);
-        if (user == null) {
-            startActivity(new Intent(getApplicationContext(), Login.class));
-            finish();
-        } else
-            textEmail.setText(user.getEmail());
 
         addButton.setOnClickListener(v -> addOnDB());
         editDeleteEvent();
@@ -209,6 +210,7 @@ public class EventListAdmin extends AppCompatActivity {
                     TextView desc = dialogView.findViewById(R.id.desc);
                     TextView price = dialogView.findViewById(R.id.price);
                     TextView seats = dialogView.findViewById(R.id.seats);
+                    TextView organizer = dialogView.findViewById(R.id.organizer);
                     ImageView qrImage = dialogView.findViewById(R.id.qrImage);
                     LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
@@ -227,6 +229,16 @@ public class EventListAdmin extends AppCompatActivity {
                     desc.setText(event.getDescription());
                     date.setText(dateText);
                     time.setText(timeText);
+
+                    fstore.collection("Users").document(event.getOrganizer()).get().addOnSuccessListener(documentSnapshot -> {
+                        // Get name of the organizer of the event
+                        if (documentSnapshot.exists() && !event.getOrganizer().equals(user.getUid()))
+                            organizer.setText(String.format("Organized by %s", documentSnapshot.getString("UserName")));
+                        else
+                            organizer.setVisibility(View.GONE);
+                    });
+
+
                     if (event.getPrice() == 0)
                         price.setText("Free");
                     else

@@ -10,20 +10,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
     Context context;
     ArrayList<Event> arrayList;
+    private String userUid;
     OnEventListener onEventClickListener;
     OnEditListener onEditClickListener;
 
     public EventAdapter(Context context, ArrayList<Event> arrayList) {
         this.context = context;
         this.arrayList = arrayList;
+        this.userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        sortEventsByDate();
     }
 
     @NonNull
@@ -35,24 +42,24 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(arrayList.get(position).getDate()), ZoneId.systemDefault());
+        Event event = arrayList.get(position);
+        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
-        holder.title.setText(arrayList.get(position).getTitle());
-        //holder.place.setText(arrayList.get(position).getPlace());
+        holder.title.setText(event.getTitle());
         holder.date.setText(date.getDayOfMonth() + "/" + date.getMonthValue());
+
+        if (event.getOrganizer() != null && event.getOrganizer().equals(userUid))
+            holder.editButton.setVisibility(View.VISIBLE);
+        else
+            holder.editButton.setVisibility(View.GONE);
 
         holder.editButton.setOnClickListener(v -> {
             if (onEditClickListener != null) {
-                onEditClickListener.onEditButtonClick(arrayList.get(position));
+                onEditClickListener.onEditButtonClick(event);
             }
         });
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onEventClickListener.onItemClick(arrayList.get(position));
-            }
-        });
+        holder.itemView.setOnClickListener(v -> onEventClickListener.onItemClick(event));
     }
 
     @Override
@@ -61,16 +68,31 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, place, date;
+        TextView title, date;
         Button editButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.list_title);
-            //place = itemView.findViewById(R.id.list_place);
             date = itemView.findViewById(R.id.list_date);
             editButton = itemView.findViewById(R.id.btn_edit);
         }
+    }
+
+    private void sortEventsByDate() {
+        LocalDateTime now = LocalDateTime.now();
+
+        // Filter out the events that are before the current time
+        List<Event> futureEvents = arrayList.stream()
+                .filter(event -> event.getDate() > now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).sorted((event1, event2) -> {
+                    Long date1 = event1.getDate();
+                    Long date2 = event2.getDate();
+                    return date1.compareTo(date2); // Ascending order
+                }).collect(Collectors.toList());
+
+        // Set the filtered and sorted list back into the adapter
+        arrayList.clear();
+        arrayList.addAll(futureEvents);
     }
 
     public void setOnEventListener(OnEventListener onEventListener) {

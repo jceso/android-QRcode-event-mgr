@@ -1,7 +1,9 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,11 +18,17 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.util.Random;
+
 public class QrScanner extends AppCompatActivity {
     private TextView scannedValue;
+    FirebaseAuth mAuth;
+    FirebaseUser user;
+    FirebaseFirestore db;
 
     private final ActivityResultLauncher<ScanOptions> scannerLauncher =
             registerForActivityResult(new ScanContract(), result -> {
@@ -47,37 +55,52 @@ public class QrScanner extends AppCompatActivity {
             return insets;
         });
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        TextView textEmail = findViewById(R.id.user_email);
-        Button logout = findViewById(R.id.logout_btn);
+        Button name_btn = findViewById(R.id.user);
+        Button logout_btn = findViewById(R.id.logout_btn);
         scannedValue = findViewById(R.id.value);
-        Button scan = findViewById(R.id.scan_btn);
+        Button scan_btn = findViewById(R.id.scan_btn);
         Button list = findViewById(R.id.evt_list);
-        FirebaseUser user = mAuth.getCurrentUser();
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+
         if (user == null) {
             startActivity(new Intent(getApplicationContext(), Login.class));
             finish();
-        } else
-            textEmail.setText(user.getEmail());
+        } else {
+            db = FirebaseFirestore.getInstance();
+            db.collection("Users").document(user.getUid()).get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    // Get the name from the FireStore document
+                    String nameInitial = documentSnapshot.getString("UserName");
+                    name_btn.setText(nameInitial.substring(0,1));
+                } else
+                    Log.d("User Info", "No such document");
+            });
+        }
 
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), Login.class));
-                finish();
-            }
+        // Generate random RGB values ensuring brightness and moderate saturation, not vivid colors
+        Random rand = new Random();
+        int r = (int) (Math.min(0.5f + rand.nextFloat() * 0.5f, 0.9f) * 255);
+        int g = (int) (Math.min(0.5f + rand.nextFloat() * 0.5f, 0.9f) * 255);
+        int b = (int) (Math.min(0.5f + rand.nextFloat() * 0.5f, 0.9f) * 255);
+        // Set random color for username button
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor((0xFF << 24) | (r << 16) | (g << 8) | b);
+        drawable.setCornerRadius(100);
+        name_btn.setBackground(drawable);
+
+        logout_btn.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(getApplicationContext(), Login.class));
+            finish();
         });
 
-        scan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ScanOptions options = new ScanOptions();
-                options.setPrompt("Scan QR Code");
-                options.setOrientationLocked(false);
-                options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
-                scannerLauncher.launch(options);
-            }
+        scan_btn.setOnClickListener(v -> {
+            ScanOptions options = new ScanOptions();
+            options.setPrompt("Scan QR Code");
+            options.setOrientationLocked(false);
+            options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
+            scannerLauncher.launch(options);
         });
 
         list.setOnClickListener(new View.OnClickListener() {

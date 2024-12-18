@@ -1,18 +1,17 @@
 package com.example.myapplication;
 
-import android.util.Log;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public class Event {
     private String key, title, place, description, organizer;
     private long date;
-
     private float price;
     private int max_seats, num_subs;
 
-    public Event() { }
+    public Event() {
+        this.num_subs = 0;
+    }
 
     public String getKey() {
         return this.key;
@@ -41,10 +40,6 @@ public class Event {
     public void setDate(int d, int mth, int y, int h, int min) {
         LocalDateTime localDateTime = LocalDateTime.of(y, mth, d, h, min);
         this.date = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        // Log the long value
-        Log.d("date", "Epoch milliseconds: " + this.date);
-
     }
 
     public String getDescription() {
@@ -71,7 +66,14 @@ public class Event {
     public int getNum_subs() {
         return num_subs;
     }
-    public void setNum_subs(int num_subs) {
-        this.num_subs = num_subs;
+    public void addNum_subs() {
+        this.num_subs++;
+    }
+
+    public String getOrganizer() {
+        return this.organizer;
+    }
+    public void setOrganizer(String organizer) {
+        this.organizer = organizer;
     }
 }

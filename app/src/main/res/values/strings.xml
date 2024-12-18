@@ -30,4 +30,6 @@
     <string name="availability">Availability:</string>
     <string name="no_limits">No limits</string>
     <string name="qr_code">QR code of the event</string>
+    <string name="name">Name</string>
+    <string name="user_inital">U</string>
 </resources>

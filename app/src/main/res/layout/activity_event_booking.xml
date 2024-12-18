@@ -88,7 +88,7 @@
         android:textColor="@color/white" />
 
     <Button
-        android:id="@+id/price"
+        android:id="@+id/book"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/desc"
@@ -97,6 +97,6 @@
         android:text="@string/free"
         android:textSize="25sp"
         android:textStyle="bold"
-        app:drawableStartCompat="@drawable/shopping_cart" />
+        app:drawableEndCompat="@drawable/shopping_cart" />
 
 </RelativeLayout>

@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,6 +33,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -54,6 +57,7 @@ import androidmads.library.qrgenearator.QRGEncoder;
 public class EventListAdmin extends AppCompatActivity {
 
     private FirebaseDatabase database;
+    FirebaseUser user;
     private int[] dateInfos;
     private Bitmap bitmap;
 
@@ -71,10 +75,17 @@ public class EventListAdmin extends AppCompatActivity {
         // Firebase setting
         FirebaseApp.initializeApp(EventListAdmin.this);
         database = FirebaseDatabase.getInstance("https://ing-soft-firebase-default-rtdb.europe-west1.firebasedatabase.app/");
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         // CRUD setting
         dateInfos = new int[] {1, 1, 1, 1, 1};
         FloatingActionButton addButton = findViewById(R.id.addButton);
+        TextView textEmail = findViewById(R.id.user_email);
+        if (user == null) {
+            startActivity(new Intent(getApplicationContext(), Login.class));
+            finish();
+        } else
+            textEmail.setText(user.getEmail());
 
         addButton.setOnClickListener(v -> addOnDB());
         editDeleteEvent();
@@ -118,7 +129,6 @@ public class EventListAdmin extends AppCompatActivity {
                 else if (desc.getText().toString().trim().isEmpty())
                     desc.setError("Description is required");
                 else {
-                    // All fields are filled in, so create the event
                     ProgressBar progressBar = findViewById(R.id.progress_bar);
                     progressBar.setVisibility(View.VISIBLE);
                     Event event = new Event();
@@ -140,6 +150,7 @@ public class EventListAdmin extends AppCompatActivity {
                     event.setPlace(place.getText().toString());
                     event.setDescription(desc.getText().toString());
                     event.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
+                    event.setOrganizer(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
 
                     database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
                         progressBar.setVisibility(View.GONE);
@@ -204,6 +215,11 @@ public class EventListAdmin extends AppCompatActivity {
                     String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
                     String timeText = dateEvent.getHour() + ":" + String.format("%02d", dateEvent.getMinute());
                     QRGEncoder qrgEncoder = new QRGEncoder(event.getKey(), null, QRGContents.Type.TEXT, 200);
+
+                    // !!!SOS!!! BUG FORSE DELLA LIBRERIA!? I COLORI DEL QR CODE SONO INVERTITI
+                    // Set colors for the QR code
+                    qrgEncoder.setColorBlack(Color.WHITE);
+                    qrgEncoder.setColorWhite(Color.BLACK);
                     bitmap = qrgEncoder.getBitmap();
 
                     title.setText(event.getTitle());

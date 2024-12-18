@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Register extends AppCompatActivity {
-    EditText emailInput, passwordInput, phoneInput;
+    EditText nameInput, emailInput, passwordInput, phoneInput;
     Button reg_btn;
     TextView logNow;
     FirebaseAuth fAuth;
@@ -59,6 +59,7 @@ public class Register extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
+        nameInput = findViewById(R.id.name);
         emailInput = findViewById(R.id.email);
         passwordInput = findViewById(R.id.password);
         phoneInput = findViewById(R.id.phone);
@@ -76,7 +77,8 @@ public class Register extends AppCompatActivity {
         reg_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email, password, phone;
+                String name, email, password, phone;
+                name = String.valueOf(nameInput.getText());
                 email = String.valueOf(emailInput.getText());
                 password = String.valueOf(passwordInput.getText());
                 phone = phoneInput.getText().toString();
@@ -101,6 +103,8 @@ public class Register extends AppCompatActivity {
                                     Toast.makeText(Register.this, "Account created!", Toast.LENGTH_SHORT).show();
                                     DocumentReference dr = fStore.collection("Users").document(user.getUid());
                                     Map<String,Object> userInfo = new HashMap<>();
+
+                                    userInfo.put("UserName", name);
                                     userInfo.put("UserEmail", email);
                                     userInfo.put("PhoneNumber", phone);
                                     userInfo.put("isAdmin", "0");   //On FireStore change to 1 in case of admin

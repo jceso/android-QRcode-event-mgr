@@ -3,14 +3,22 @@ package com.example.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Button;
+
+import androidx.core.content.FileProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Random;
 
 public class BasicButtons {
@@ -62,5 +70,28 @@ public class BasicButtons {
         drawable.setColor((0xFF << 24) | (r << 16) | (g << 8) | b);
         drawable.setCornerRadius(100);
         userBtn.setBackground(drawable);
+    }
+
+    // Method to create URI from a Bitmap
+    public static Uri getUriFromBitmap(Context context, Bitmap bitmap) {
+        try {
+            // Create a file to store the QR code image
+            File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                    "qr_code_" + System.currentTimeMillis() + ".png");
+
+            // Write the bitmap to the file
+            FileOutputStream outStream = new FileOutputStream(file);
+            if (bitmap != null) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 90, outStream);
+                outStream.close();
+            }
+
+            // Get the URI for the file using FileProvider
+            return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
+        } catch (IOException e) {
+            Log.e("QR-Sharing", "getUriFromBitmap: " + e.getMessage());
+        }
+
+        return null;
     }
 }

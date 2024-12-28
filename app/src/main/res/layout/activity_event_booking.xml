@@ -91,12 +91,52 @@
         android:id="@+id/book"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/desc"
+        android:layout_marginBottom="5dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_above="@+id/save_share"
         android:padding="15dp"
+        android:paddingHorizontal="50dp"
         android:gravity="center"
         android:text="@string/free"
         android:textSize="25sp"
         android:textStyle="bold"
-        app:drawableEndCompat="@drawable/shopping_cart" />
+        app:drawableEndCompat="@drawable/shopping_cart"
+        android:background="#FA20BD" />
+
+    <RelativeLayout
+        android:id="@+id/save_share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp" >
+
+        <ImageButton
+            android:id="@+id/save"
+            android:layout_width="wrap_content"
+            android:layout_height="65dp"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/share"
+            android:layout_marginEnd="10dp"
+            android:background="@color/secondary"
+            android:src="@drawable/bookmark_empty"
+            android:scaleType="center"
+            android:contentDescription="Save" />
+
+        <Button
+            android:id="@+id/share"
+            android:layout_width="300dp"
+            android:layout_height="65dp"
+            android:layout_alignParentEnd="true"
+            android:paddingHorizontal="70dp"
+            android:gravity="center"
+            android:text="@string/share"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/share"
+            android:background="@color/primary" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

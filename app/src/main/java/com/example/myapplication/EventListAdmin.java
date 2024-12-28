@@ -255,7 +255,7 @@ public class EventListAdmin extends AppCompatActivity {
                             .setPositiveButton("Close", (dialog, which) -> dialog.dismiss()) // Close button
                             .setNeutralButton("Share QR", (dialogInterface, which) -> {
                                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                                shareIntent.putExtra(Intent.EXTRA_STREAM, getUriFromBitmap());
+                                shareIntent.putExtra(Intent.EXTRA_STREAM, BasicButtons.getUriFromBitmap(EventListAdmin.this, bitmap));
                                 shareIntent.putExtra(Intent.EXTRA_TEXT, "Scan this code to book the event " + event.getTitle());
                                 shareIntent.setType("image/*");
                                 startActivity(Intent.createChooser(shareIntent, "Share via"));

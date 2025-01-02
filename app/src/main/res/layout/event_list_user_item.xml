@@ -15,7 +15,7 @@
 
         <TextView
             android:id="@+id/list_title"
-            android:layout_width="200dp"
+            android:layout_width="230dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:paddingBottom="5dp"
@@ -28,27 +28,29 @@
 
         <TextView
             android:id="@+id/list_date"
-            android:layout_width="200dp"
+            android:layout_width="225dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/list_title"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="5dp"
             android:text="Date"
+            android:textColor="#575757"
             android:textSize="15sp"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textStyle="italic"/>
 
-        <Button
-            android:id="@+id/btn_edit"
+        <TextView
+            android:id="@+id/list_price"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:drawableEnd="@drawable/time"
+            android:drawableEnd="@drawable/money"
             android:drawablePadding="10dp"
             android:gravity="end|center_vertical"
             android:padding="7dp"
-            android:text="Edit"
-            android:textColor="#575757"
-            android:textSize="17sp" />
+            android:text="@string/free"
+            android:textSize="17sp"
+            android:textStyle="bold"/>
 
         <!--
         <TextView

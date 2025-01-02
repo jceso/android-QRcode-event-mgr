@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,15 +23,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
-    Context context;
-    ArrayList<Event> arrayList;
-    private String userUid;
-    OnEventListener onEventClickListener;
-    OnEditListener onEditClickListener;
+    private static final int LAYOUT_ADMIN = 1, LAYOUT_USER = 2;
 
-    public EventAdapter(Context context, ArrayList<Event> arrayList) {
+    private Context context;
+    private int layoutType;
+    private ArrayList<Event> arrayList;
+    private String userUid;
+    private OnEventListener onEventClickListener;
+    private OnEditListener onEditClickListener;
+
+    public EventAdapter(Context context, ArrayList<Event> arrayList, int layoutType) {
         this.context = context;
         this.arrayList = arrayList;
+        this.layoutType = layoutType;
         this.userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         sortEventsByDate();
     }
@@ -36,7 +43,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.event_list_item, parent, false);
+        int layoutRes = (layoutType == LAYOUT_ADMIN) ? R.layout.event_list_admin_item : R.layout.event_list_user_item;
+        View view = LayoutInflater.from(context).inflate(layoutRes, parent, false);
         return new ViewHolder(view);
     }
 
@@ -48,35 +56,59 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         holder.title.setText(event.getTitle());
         holder.date.setText(date.getDayOfMonth() + "/" + date.getMonthValue());
 
-        if (event.getOrganizer() != null && event.getOrganizer().equals(userUid))
-            holder.editButton.setVisibility(View.VISIBLE);
-        else
-            holder.editButton.setVisibility(View.GONE);
+        if (layoutType == LAYOUT_ADMIN) {
+            // Edit button (ADMIN LAYOUT)
+            if (event.getOrganizer() != null && event.getOrganizer().equals(userUid))
+                holder.editButton.setVisibility(View.VISIBLE);
+            else
+                holder.editButton.setVisibility(View.GONE);
 
-        holder.editButton.setOnClickListener(v -> {
-            if (onEditClickListener != null) {
-                onEditClickListener.onEditButtonClick(event);
+            holder.editButton.setOnClickListener(v -> {
+                if (onEditClickListener != null) {
+                    onEditClickListener.onEditButtonClick(event);
+                }
+            });
+        } else if (layoutType == LAYOUT_USER) {
+            // Price text (USER LAYOUT)
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+            symbols.setDecimalSeparator(',');
+
+            if (event.getPrice() == 0)
+                holder.price.setText("Free");
+            else
+                holder.price.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()));
+        }
+
+        // Click on items (BOTH LAYOUT)
+        holder.itemView.setOnClickListener(v -> {
+            if (layoutType == LAYOUT_ADMIN)
+                onEventClickListener.onItemClick(event);    // ADMIN LAYOUT
+            else if (layoutType == LAYOUT_USER) {
+                // USER LAYOUT behaviour
+                Intent intent = new Intent(context, EventBooking.class);
+                intent.putExtra("event_uid", event.getKey());   // Use UID of the event
+                context.startActivity(intent);
             }
         });
-
-        holder.itemView.setOnClickListener(v -> onEventClickListener.onItemClick(event));
-    }
-
-    @Override
-    public int getItemCount() {
-        return arrayList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, date;
+        TextView title, date, price;
         Button editButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.list_title);
             date = itemView.findViewById(R.id.list_date);
-            editButton = itemView.findViewById(R.id.btn_edit);
+
+            editButton = itemView.findViewById(R.id.btn_edit);  // ADMIN LAYOUT
+            price = itemView.findViewById(R.id.list_price);     // USER LAYOUT
         }
+    }
+
+    @Override
+    public int getItemCount() {
+        return arrayList.size();
     }
 
     private void sortEventsByDate() {

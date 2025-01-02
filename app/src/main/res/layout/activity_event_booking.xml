@@ -8,10 +8,36 @@
     android:background="#123456"
     tools:context=".EventBooking">
 
+    <Button
+        android:id="@+id/logout_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/neg_button"
+        android:padding="10dp"
+        android:text="@string/logout"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/user"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="26dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/user_inital"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/logout_btn"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"

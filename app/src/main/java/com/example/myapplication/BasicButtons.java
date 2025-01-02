@@ -10,7 +10,9 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Button;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -93,5 +95,19 @@ public class BasicButtons {
         }
 
         return null;
+    }
+
+    // Add OnBackPressed callback functionality
+    public static void addOnBackPressedCallback(Context context, Class<?> targetActivity) {
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Execute the custom back button action
+                context.startActivity(new Intent(context, targetActivity));
+                if (context instanceof Activity) {
+                    ((Activity) context).finish();
+                }
+            }
+        };
     }
 }

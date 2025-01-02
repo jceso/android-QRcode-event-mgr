@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -30,7 +29,6 @@ import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -40,7 +38,7 @@ import androidmads.library.qrgenearator.QRGEncoder;
 public class EventBooking extends AppCompatActivity {
     private FirebaseDatabase database;
     private Event event;
-    private String scannedQRCode;
+    private String eventUID;
     private Button btn_book;
     private ImageButton btn_save;
     private Button btn_share;
@@ -59,17 +57,23 @@ public class EventBooking extends AppCompatActivity {
         // Firebase setting
         FirebaseApp.initializeApp(EventBooking.this);
         database = FirebaseDatabase.getInstance("https://ing-soft-firebase-default-rtdb.europe-west1.firebasedatabase.app/");
-        scannedQRCode = getIntent().getStringExtra("scannedQRCode");
+        eventUID = getIntent().getStringExtra("event_uid");
 
-        Log.d("EventBooking", "Scanned QR code: " + scannedQRCode);
+        // Setting basic buttons
+        Button logout_btn = findViewById(R.id.logout_btn);
+        logout_btn.setOnClickListener(v -> BasicButtons.handleLogoutButton(EventBooking.this));
+        Button name_btn = findViewById(R.id.user);
+        BasicButtons.checkUserAndSetNameButton(EventBooking.this, name_btn);
+        BasicButtons.addOnBackPressedCallback(EventBooking.this, QrScanner.class);
 
-        database.getReference().child("event").child(scannedQRCode).addListenerForSingleValueEvent(new ValueEventListener() {
+        // Fetch event data from Firebase
+        database.getReference().child("event").child(eventUID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     event = snapshot.getValue(Event.class);
                     if (event != null) {
-                        // Finding and setting XML elements
+                        // Finding XML elements
                         TextView title = findViewById(R.id.title);
                         TextView place = findViewById(R.id.place);
                         TextView description = findViewById(R.id.desc);
@@ -86,31 +90,27 @@ public class EventBooking extends AppCompatActivity {
                         String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
                         String timeText = dateEvent.getHour() + ":" + String.format("%02d", dateEvent.getMinute());
 
-                        Log.d("EventBooking", "Event title: " + event.getTitle());
+                        // Set event data
                         title.setText(event.getTitle());
                         place.setText(event.getPlace());
                         description.setText(event.getDescription());
                         date.setText(dateText);
                         time.setText(timeText);
-
-                        Log.d("Event infos", "There are " + event.getSeats() + " seats with " + event.getNum_subs() + " subscriptions");
-                        Log.d("Event infos", "The price is " + event.getPrice());
                         if (event.getNum_subs() < event.getSeats() || event.getSeats() == 0) {
                             if (event.getPrice() == 0)
                                 btn_book.setText(R.string.free);
                             else
-                                btn_book.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()));
+                                btn_book.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()) + "€");
                         } else {
                             btn_book.setText("Sold out!");
                             btn_book.setEnabled(false);
                         }
 
                         // Set the click listeners
-                        bookEvent(scannedQRCode, event);
+                        bookEvent(eventUID, event);
                         shareSaveBtn(event.getTitle());
                     }
                 } else {
-                    Log.d("EventBooking", "No event found with the given QR code.");
                     Toast.makeText(EventBooking.this, "No event found with the given QR code", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -120,46 +120,27 @@ public class EventBooking extends AppCompatActivity {
                 Log.e("EventBooking", "Error fetching event: " + error.getMessage());
             }
         });
-
-
-        /*
-        QRGEncoder qrgEncoder = new QRGEncoder(scannedQRCode, null, QRGContents.Type.TEXT, 200);
-
-        // !!!SOS!!! BUG FORSE DELLA LIBRERIA!? I COLORI DEL QR CODE SONO INVERTITI
-        // Set colors for the QR code
-        qrgEncoder.setColorBlack(Color.WHITE);
-        qrgEncoder.setColorWhite(Color.BLACK);
-        Bitmap bitmap = qrgEncoder.getBitmap();
-
-        // Share QR code
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_STREAM, BasicButtons.getUriFromBitmap(EventBooking.this, bitmap));
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Scan this code to book the event " + event.getTitle());
-        shareIntent.setType("image/*");
-        startActivity(Intent.createChooser(shareIntent, "Share via"));
-
-         */
-
     }
 
-    private void bookEvent(String scannedQRCode, Event event) {
+    private void bookEvent(String eventUID, Event event) {
         btn_book.setOnClickListener(v -> {
             // Get the current user's UID
             String user_uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
             // Create a new subscription (sale)
             Sale sale = new Sale();
-            sale.setEventUID(scannedQRCode);
+            sale.setEventUID(eventUID);
             sale.setUserUID(user_uid);
             sale.setTime(LocalDateTime.now().toString());
             database.getReference().child("sale").push().setValue(sale);
 
             // Update the event number of subscriptions
             event.addNum_subs();
-            database.getReference().child("event").child(scannedQRCode).setValue(event)
+            database.getReference().child("event").child(eventUID).setValue(event)
                     .addOnSuccessListener(aVoid -> Toast.makeText(EventBooking.this, "Successfully updated number of subscriptions!", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(e -> Toast.makeText(EventBooking.this, "Error updating event", Toast.LENGTH_SHORT).show());
 
+            btn_book.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.subscribed, 0);
             btn_book.setText("Booked!");
             btn_book.setEnabled(false);
         });
@@ -167,32 +148,34 @@ public class EventBooking extends AppCompatActivity {
 
     private void shareSaveBtn(String titleEvent) {
         // Initialize saved event list and set initial icon
-        SharedPreferences sharedPreferences = getSharedPreferences("saved_events", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Set<String> savedEventKeys = sharedPreferences.getStringSet("events", new HashSet<>());
-        updateBookmarkIcon(savedEventKeys.contains(event.getKey()));
+        Set<String> savedEventKeys = EventFileManager.loadEvents(this);
+        Log.d("EventBooking", "Saved Event Keys: " + savedEventKeys  + " on the page of "  + eventUID);
+        updateBookmarkIcon(savedEventKeys.contains(eventUID));
 
         // Set SAVE button
         btn_save.setOnClickListener(v -> {
-            if (savedEventKeys.contains(event.getKey())) {
+            if (savedEventKeys.contains(eventUID)) {
                 // REMOVE EVENT FROM SAVED EVENT
-                savedEventKeys.remove(event.getKey());
+                savedEventKeys.remove(eventUID);
+                Log.d("EventBooking", "Removed event with key: " + eventUID + " | OR | "  + event.getKey());
+                Log.d("EventBooking", "Saved Event Keys: " + savedEventKeys);
                 Toast.makeText(this, "Event removed from saved events", Toast.LENGTH_SHORT).show();
             } else {
-                // ADD REMOVE EVENT TO SAVED EVENT
-                savedEventKeys.add(event.getKey());
+                // ADD EVENT TO SAVED EVENT
+                savedEventKeys.add(eventUID);
+                Log.d("EventBooking", "Added event with key: " + eventUID + " | OR | " + event.getKey());
+                Log.d("EventBooking", "Saved Event Keys: " + savedEventKeys);
                 Toast.makeText(this, "Event added to saved events", Toast.LENGTH_SHORT).show();
             }
 
             // Update SharedPreferences and bookmark icon
-            editor.putStringSet("events", savedEventKeys);
-            editor.apply();
-            updateBookmarkIcon(savedEventKeys.contains(event.getKey()));
+            EventFileManager.saveEvents(this, savedEventKeys);
+            updateBookmarkIcon(savedEventKeys.contains(eventUID));
         });
 
         //Set SHARE button
         btn_share.setOnClickListener(v -> {
-            QRGEncoder qrgEncoder = new QRGEncoder(scannedQRCode, null, QRGContents.Type.TEXT, 200);
+            QRGEncoder qrgEncoder = new QRGEncoder(eventUID, null, QRGContents.Type.TEXT, 200);
 
             // !!!SOS!!! BUG FORSE DELLA LIBRERIA!? I COLORI DEL QR CODE SONO INVERTITI
             // Set colors for the QR code
@@ -216,33 +199,4 @@ public class EventBooking extends AppCompatActivity {
         else
             btn_save.setImageResource(R.drawable.bookmark_empty);
     }
-
-    /*
-        private void loadSavedEvents() {
-            SharedPreferences sharedPreferences = getSharedPreferences("saved_events", MODE_PRIVATE);
-            Set<String> savedEventKeys = sharedPreferences.getStringSet("events", new HashSet<>());
-
-            // Iterate through saved event keys and fetch event data from Firebase
-            for (String eventKey : savedEventKeys) {
-                // Fetch event data from Firebase using the eventKey
-                database.getReference().child("event").orderByChild("key").equalTo(eventKey)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
-                                Event event = eventSnapshot.getValue(Event.class);
-                                if (event != null) {
-                                    // You can now display this event or use it as needed
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            // Handle error
-                        }
-                    });
-            }
-        }
-     */
 }

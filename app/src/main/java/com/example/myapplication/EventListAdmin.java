@@ -196,7 +196,7 @@ public class EventListAdmin extends AppCompatActivity {
                 DecimalFormatSymbols symbols = new DecimalFormatSymbols();
                 symbols.setDecimalSeparator(',');
                 ProgressBar progressBar = findViewById(R.id.progress_bar);
-                EventAdapter adapter = new EventAdapter(EventListAdmin.this, arrayList);
+                EventAdapter adapter = new EventAdapter(EventListAdmin.this, arrayList, 1);
                 recyclerView.setAdapter(adapter);
 
                 // Show details of event on dialog

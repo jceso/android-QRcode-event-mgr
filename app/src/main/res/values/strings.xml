@@ -17,9 +17,9 @@
     <string name="email">Email</string>
     <string name="cellphone">Phone number</string>
     <string name="click_login">Do you have an account? Login here</string>
-    <string name="scan_code">Scan a QR Code</string>
+    <string name="scan_code">Scan QR Code</string>
     <string name="logout">Logout</string>
-    <string name="booked_list">Already booked events</string>
+    <string name="booked_list">Saved events</string>
     <string name="title">Title</string>
     <string name="location">Location</string>
     <string name="date">Date</string>
@@ -32,6 +32,6 @@
     <string name="qr_code">QR code of the event</string>
     <string name="name">Name</string>
     <string name="user_inital">U</string>
-    <string name="organizer">Organizer</string>
     <string name="share">Share</string>
+    <string name="empty_list">List is empty!</string>
 </resources>

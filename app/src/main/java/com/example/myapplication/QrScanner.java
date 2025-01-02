@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,7 +31,7 @@ public class QrScanner extends AppCompatActivity {
                     scannedValue.setText(result.getContents());
                     // Pass the scanned value to EventBooking activity
                     Intent intent = new Intent(getApplicationContext(), EventBooking.class);
-                    intent.putExtra("scannedQRCode", result.getContents()); // Put the scanned QR code content in the intent
+                    intent.putExtra("event_uid", result.getContents()); // Put the scanned QR code content in the intent
                     startActivity(intent);
                     finish();
                 }
@@ -57,11 +58,12 @@ public class QrScanner extends AppCompatActivity {
         Button scan_btn = findViewById(R.id.scan_btn);
         Button list = findViewById(R.id.evt_list);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         scan_btn.setOnClickListener(v -> {
             ScanOptions options = new ScanOptions();
             options.setPrompt("Scan QR Code");
-            options.setOrientationLocked(false);
+            options.setOrientationLocked(true);
             options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
             scannerLauncher.launch(options);
         });

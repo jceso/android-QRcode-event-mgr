@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,8 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class EventListUser extends AppCompatActivity {
@@ -77,12 +74,11 @@ public class EventListUser extends AppCompatActivity {
         database.getReference().child("event").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // Retrieve saved event keys from SharedPreferences
+                // Retrieve saved event keys from Local Storage
                 ArrayList<Event> arrayList = new ArrayList<>();
-                SharedPreferences sharedPreferences = getSharedPreferences("saved_events", MODE_PRIVATE);
-                Set<String> savedEventKeys = sharedPreferences.getStringSet("events", new HashSet<>());
-
-                Log.d("EventListUser", "Saved Event Keys: " + savedEventKeys);
+                Set<String> savedEventKeys = EventFileManager.loadEvents(EventListUser.this);
+                savedEventKeys.remove(null);
+                Log.d("EventBooking", "Saved Event Keys: " + savedEventKeys);
 
                 // Filter events based on saved keys
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {

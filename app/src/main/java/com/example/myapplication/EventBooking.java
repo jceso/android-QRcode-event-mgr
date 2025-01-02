@@ -29,6 +29,7 @@ import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -88,7 +89,8 @@ public class EventBooking extends AppCompatActivity {
                         symbols.setDecimalSeparator(',');
 
                         String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
-                        String timeText = dateEvent.getHour() + ":" + String.format("%02d", dateEvent.getMinute());
+                        String timeText = dateEvent.getHour() + ":" + String.format(Locale.getDefault(), "%02d", dateEvent.getMinute());
+
 
                         // Set event data
                         title.setText(event.getTitle());

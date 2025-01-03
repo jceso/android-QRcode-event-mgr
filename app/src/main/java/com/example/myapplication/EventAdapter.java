@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
-    private static final int LAYOUT_ADMIN = 1, LAYOUT_USER = 2;
+    private static final int LAYOUT_ADMIN = 1, LAYOUT_USER = 2, LAYOUT_SALE = 3;
 
     private Context context;
     private int layoutType;
@@ -43,8 +43,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        int layoutRes = (layoutType == LAYOUT_ADMIN) ? R.layout.event_list_admin_item : R.layout.event_list_user_item;
-        View view = LayoutInflater.from(context).inflate(layoutRes, parent, false);
+        // Define an array that maps layout types to layout resources
+        int[] layoutResArray = {
+                R.layout.event_list_admin_item, // LAYOUT_ADMIN
+                R.layout.event_list_user_item,  // LAYOUT_USER
+                R.layout.user_sale_list_item    // LAYOUT_SALE
+        };
+
+        View view = LayoutInflater.from(context).inflate(layoutResArray[layoutType - 1], parent, false);
         return new ViewHolder(view);
     }
 
@@ -74,15 +80,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             symbols.setDecimalSeparator(',');
 
             if (event.getPrice() == 0)
-                holder.price.setText("Free");
+                holder.price.setText(R.string.free);
             else
                 holder.price.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()));
         }
 
         // Click on items (BOTH LAYOUT)
         holder.itemView.setOnClickListener(v -> {
-            if (layoutType == LAYOUT_ADMIN)
-                onEventClickListener.onItemClick(event);    // ADMIN LAYOUT
+            if (layoutType == LAYOUT_ADMIN || layoutType == LAYOUT_SALE)
+                onEventClickListener.onItemClick(event);    // Show event details
             else if (layoutType == LAYOUT_USER) {
                 // USER LAYOUT behaviour
                 Intent intent = new Intent(context, EventBooking.class);

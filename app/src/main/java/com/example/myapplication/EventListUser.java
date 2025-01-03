@@ -51,15 +51,15 @@ public class EventListUser extends AppCompatActivity {
         BasicButtons.checkUserAndSetNameButton(EventListUser.this, name_btn);
 
         FloatingActionButton scanButton = findViewById(R.id.scanButton);
-        ImageView saved_btn = findViewById(R.id.svd_list);
+        FloatingActionButton cartButton = findViewById(R.id.cartButton);
 
         scanButton.setOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(), QrScanner.class));
             finish();
         });
 
-        saved_btn.setOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(), EventListUser.class));
+        cartButton.setOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(), ShoppingCart.class));
             finish();
         });
 

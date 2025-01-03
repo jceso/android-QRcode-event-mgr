@@ -13,6 +13,7 @@ import java.util.Set;
 
 public class EventFileManager {
     private static final String FILE_NAME = "saved_events.txt";
+    private static final String FILE_CART = "cart_events.txt";
 
     // Save the set of event keys to a file
     public static void saveEvents(Context context, Set<String> eventKeys) {
@@ -29,6 +30,32 @@ public class EventFileManager {
     public static Set<String> loadEvents(Context context) {
         Set<String> eventKeys = new HashSet<>();
         try (FileInputStream fis = context.openFileInput(FILE_NAME);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                eventKeys.add(line.trim()); // Read each line and add it to the set
+            }
+        } catch (IOException e) {
+            Log.e("EventFileManager", "Error reading events: " + e.getMessage());
+        }
+        return eventKeys;
+    }
+
+    // Save the cart of event keys to a file
+    public static void saveCart(Context context, Set<String> eventKeys) {
+        try (FileOutputStream fos = context.openFileOutput(FILE_CART, Context.MODE_PRIVATE)) {
+            for (String key : eventKeys) {
+                fos.write((key + "\n").getBytes()); // Write each event key on a new line
+            }
+        } catch (IOException e) {
+            Log.e("EventFileManager", "Error saving events: " + e.getMessage());
+        }
+    }
+
+    // Read the set of event keys from a file
+    public static Set<String> loadCart(Context context) {
+        Set<String> eventKeys = new HashSet<>();
+        try (FileInputStream fis = context.openFileInput(FILE_CART);
              BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
             String line;
             while ((line = reader.readLine()) != null) {

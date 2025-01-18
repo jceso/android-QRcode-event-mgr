@@ -8,21 +8,33 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="#123456"
-    tools:context=".EventListUser">
+    tools:context=".EventListAdmin">
+
+    <ImageButton
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="23dp"
+        android:padding="5dp"
+        android:src="@drawable/arrow_back"
+        android:contentDescription="Back"
+        android:background="@drawable/back_button" />
 
     <Button
         android:id="@+id/logout_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="26dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
+        android:layout_toEndOf="@+id/back"
         android:background="@drawable/neg_button"
         android:padding="10dp"
         android:text="@string/logout"
         android:textColor="@color/white"
         android:textSize="15sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/user"
@@ -37,13 +49,14 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/event"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/logout_btn"
-        android:layout_marginTop="15dp"
-        android:layout_marginHorizontal="50dp"
-        android:text="Saved events"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="30dp"
+        android:padding="10dp"
+        android:text="@string/title"
         android:textSize="30sp"
         android:textStyle="bold|italic" />
 
@@ -51,10 +64,10 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/title"
+        android:layout_below="@+id/event"
         android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="20dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <TextView
@@ -63,27 +76,5 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/empty_list" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/cartButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:contentDescription="Your tickets"
-        app:srcCompat="@drawable/shopping_cart"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="40dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/scanButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:contentDescription="Tap to scan events"
-        app:srcCompat="@drawable/qr_code_scanner"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="40dp" />
 
 </RelativeLayout>

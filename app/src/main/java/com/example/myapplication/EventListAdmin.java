@@ -6,9 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +21,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -39,15 +36,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 import androidmads.library.qrgenearator.QRGContents;
@@ -87,6 +82,13 @@ public class EventListAdmin extends AppCompatActivity {
         // CRUD setting
         dateInfos = new int[] {1, 1, 1, 1, 1};
         FloatingActionButton addButton = findViewById(R.id.addButton);
+        FloatingActionButton svdButton = findViewById(R.id.svdButton);
+
+        svdButton.setOnClickListener(v -> {
+            Intent intent = new Intent(EventListAdmin.this, EventListUser.class);
+            intent.putExtra("targetActivity", EventListAdmin.class); // Send back callback
+            startActivity(intent);
+        });
 
         addButton.setOnClickListener(v -> addOnDB());
         editDeleteEvent();
@@ -116,55 +118,54 @@ public class EventListAdmin extends AppCompatActivity {
 
 
         // Set a listener for the positive button after the dialog is created
-        addDialog.setOnShowListener(d -> {
-            addDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-                // Check if title, place, and description are empty
-                if (title.getText().toString().trim().isEmpty())
-                    title.setError("Title is required");
-                else if (place.getText().toString().trim().isEmpty())
-                    place.setError("Place is required");
-                else if (btn_date.getText().toString().equals("Date"))
-                    btn_date.setError("Date is required");
-                else if (btn_time.getText().toString().equals("Time"))
-                    btn_time.setError("Time is required");
-                else if (desc.getText().toString().trim().isEmpty())
-                    desc.setError("Description is required");
-                else {
-                    ProgressBar progressBar = findViewById(R.id.progress_bar);
-                    progressBar.setVisibility(View.VISIBLE);
-                    Event event = new Event();
+        addDialog.setOnShowListener(d -> addDialog
+                .getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+            // Check if title, place, and description are empty
+            if (title.getText().toString().trim().isEmpty())
+                title.setError("Title is required");
+            else if (place.getText().toString().trim().isEmpty())
+                place.setError("Place is required");
+            else if (btn_date.getText().toString().equals("Date"))
+                btn_date.setError("Date is required");
+            else if (btn_time.getText().toString().equals("Time"))
+                btn_time.setError("Time is required");
+            else if (desc.getText().toString().trim().isEmpty())
+                desc.setError("Description is required");
+            else {
+                ProgressBar progressBar = findViewById(R.id.progress_bar);
+                progressBar.setVisibility(View.VISIBLE);
+                Event event = new Event();
 
-                    // Price setting
-                    if (!price.getText().toString().isEmpty())
-                        event.setPrice(Float.parseFloat(price.getText().toString()));
-                    else
-                        event.setPrice(0);
+                // Price setting
+                if (!price.getText().toString().isEmpty())
+                    event.setPrice(Float.parseFloat(price.getText().toString()));
+                else
+                    event.setPrice(0);
 
-                    // Availability setting
-                    if (!seats.getText().toString().isEmpty())
-                        event.setSeats(Integer.parseInt(seats.getText().toString()));
-                    else
-                        event.setSeats(0);
+                // Availability setting
+                if (!seats.getText().toString().isEmpty())
+                    event.setSeats(Integer.parseInt(seats.getText().toString()));
+                else
+                    event.setSeats(0);
 
-                    // Rest of event setting
-                    event.setTitle(title.getText().toString());
-                    event.setPlace(place.getText().toString());
-                    event.setDescription(desc.getText().toString());
-                    event.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
-                    event.setOrganizer(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+                // Rest of event setting
+                event.setTitle(title.getText().toString());
+                event.setPlace(place.getText().toString());
+                event.setDescription(desc.getText().toString());
+                event.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
+                event.setOrganizer(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
 
-                    database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
-                    }).addOnFailureListener(e -> {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
-                    });
+                database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
+                }).addOnFailureListener(e -> {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
+                });
 
-                    addDialog.dismiss(); // Close the dialog after event creation
-                }
-            });
-        });
+                addDialog.dismiss(); // Close the dialog after event creation
+            }
+        }));
 
         addDialog.show();
     }
@@ -215,23 +216,22 @@ public class EventListAdmin extends AppCompatActivity {
                     LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
                     String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
-                    String timeText = dateEvent.getHour() + ":" + String.format("%02d", dateEvent.getMinute());
+                    String timeText = dateEvent.getHour() + ":" + String.format(Locale.getDefault(), "%02d", dateEvent.getMinute());
                     QRGEncoder qrgEncoder = new QRGEncoder(event.getKey(), null, QRGContents.Type.TEXT, 200);
 
-                    // !!!SOS!!! BUG FORSE DELLA LIBRERIA!? I COLORI DEL QR CODE SONO INVERTITI
-                    // Set colors for the QR code
+                    // BUG FORSE DELLA LIBRERIA!? I COLORI DEL QR CODE SONO INVERTITI
                     qrgEncoder.setColorBlack(Color.WHITE);
                     qrgEncoder.setColorWhite(Color.BLACK);
                     bitmap = qrgEncoder.getBitmap();
 
+                    // Set text and visibility
                     title.setText(event.getTitle());
                     place.setText(event.getPlace());
                     desc.setText(event.getDescription());
                     date.setText(dateText);
                     time.setText(timeText);
-
                     fstore.collection("Users").document(event.getOrganizer()).get().addOnSuccessListener(documentSnapshot -> {
-                        // Get name of the organizer of the event
+                        // Get organizer of the event
                         if (documentSnapshot.exists() && !event.getOrganizer().equals(user.getUid()))
                             organizer.setText(String.format("Organized by %s", documentSnapshot.getString("UserName")));
                         else
@@ -240,11 +240,11 @@ public class EventListAdmin extends AppCompatActivity {
 
 
                     if (event.getPrice() == 0)
-                        price.setText("Free");
+                        price.setText(R.string.free);
                     else
                         price.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()));
                     if (event.getSeats() == 0)
-                        seats.setText("No limits");
+                        seats.setText(R.string.availability);
                     else
                         seats.setHint(String.valueOf(event.getSeats()));
                     qrImage.setImageBitmap(bitmap);
@@ -288,20 +288,21 @@ public class EventListAdmin extends AppCompatActivity {
                     LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
                     String btnDateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
-                    String btnTimeText = dateEvent.getHour() + ":" + String.format("%02d", dateEvent.getMinute());
+                    String btnTimeText = dateEvent.getHour() + ":" + String.format(Locale.getDefault(), "%02d", dateEvent.getMinute());
                     dateDialog(btn_date, btn_time, dateEvent);
 
+                    // Set text and visibility
                     title.setText(event.getTitle());
                     place.setText(event.getPlace());
                     desc.setText(event.getDescription());
                     btn_date.setText(btnDateText);
                     btn_time.setText(btnTimeText);
                     if (event.getPrice() == 0)
-                        price.setHint("Free");
+                        price.setHint(R.string.free);
                     else
                         price.setHint(String.valueOf(event.getPrice()));
                     if (event.getSeats() == 0)
-                        seats.setHint("No limits");
+                        seats.setHint(R.string.availability);
                     else
                         seats.setHint(String.valueOf(event.getSeats()));
 
@@ -325,53 +326,50 @@ public class EventListAdmin extends AppCompatActivity {
                             }).create();
 
                     // Set a listener for the positive button after the dialog is created
-                    editDialog.setOnShowListener(d -> {
-                        editDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-                            // Check if title, place, and description are empty
-                            if (title.getText().toString().trim().isEmpty())
-                                title.setError("Title is required");
-                            else if (place.getText().toString().trim().isEmpty())
-                                place.setError("Place is required");
-                            else if (desc.getText().toString().trim().isEmpty())
-                                desc.setError("Description is required");
-                            else {
-                                progressBar.setVisibility(View.VISIBLE);
-                                Event eventUpd = new Event();
+                    editDialog.setOnShowListener(d -> editDialog
+                            .getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+                        // Check if title, place, and description are empty
+                        if (title.getText().toString().trim().isEmpty())
+                            title.setError("Title is required");
+                        else if (place.getText().toString().trim().isEmpty())
+                            place.setError("Place is required");
+                        else if (desc.getText().toString().trim().isEmpty())
+                            desc.setError("Description is required");
+                        else {
+                            progressBar.setVisibility(View.VISIBLE);
+                            Event eventUpd = new Event();
 
-                                // Price setting
-                                if (!price.getText().toString().isEmpty())
-                                    eventUpd.setPrice(Float.parseFloat(price.getText().toString()));
-                                else if (price.getHint() == "Free")
-                                    eventUpd.setSeats(0);
-                                else
-                                    eventUpd.setPrice(Float.parseFloat(price.getHint().toString()));
+                            // Price and availability setting
+                            if (!price.getText().toString().isEmpty())
+                                eventUpd.setPrice(Float.parseFloat(price.getText().toString()));
+                            else if (price.getHint() == "Free")
+                                eventUpd.setSeats(0);
+                            else
+                                eventUpd.setPrice(Float.parseFloat(price.getHint().toString()));
+                            if (!seats.getText().toString().isEmpty())
+                                eventUpd.setSeats(Integer.parseInt(seats.getText().toString()));
+                            else if (seats.getHint() == "No limits")
+                                eventUpd.setSeats(0);
+                            else
+                                eventUpd.setSeats(Integer.parseInt(seats.getHint().toString()));
 
-                                // Availability setting
-                                if (!seats.getText().toString().isEmpty())
-                                    eventUpd.setSeats(Integer.parseInt(seats.getText().toString()));
-                                else if (seats.getHint() == "No limits")
-                                    eventUpd.setSeats(0);
-                                else
-                                    eventUpd.setSeats(Integer.parseInt(seats.getHint().toString()));
+                            // Rest of event setting
+                            eventUpd.setTitle(title.getText().toString());
+                            eventUpd.setPlace(place.getText().toString());
+                            eventUpd.setDescription(desc.getText().toString());
+                            eventUpd.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
 
-                                // Rest of event setting
-                                eventUpd.setTitle(title.getText().toString());
-                                eventUpd.setPlace(place.getText().toString());
-                                eventUpd.setDescription(desc.getText().toString());
-                                eventUpd.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
+                            database.getReference().child("event").child(event.getKey()).setValue(eventUpd).addOnSuccessListener(unused -> {
+                                progressBar.setVisibility(View.GONE);
+                                Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                progressBar.setVisibility(View.GONE);
+                                Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
+                            });
 
-                                database.getReference().child("event").child(event.getKey()).setValue(eventUpd).addOnSuccessListener(unused -> {
-                                    progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
-                                }).addOnFailureListener(e -> {
-                                    progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
-                                });
-
-                                editDialog.dismiss();
-                            }
-                        });
-                    });
+                            editDialog.dismiss();
+                        }
+                    }));
 
                     editDialog.show();
                 });
@@ -412,33 +410,11 @@ public class EventListAdmin extends AppCompatActivity {
             TimePickerDialog dialog = new TimePickerDialog(EventListAdmin.this, (view, hour, minute) -> {
                 dateInfos[3] = hour;
                 dateInfos[4] = minute;
-                String timeText = hour + ":" + String.format("%02d", minute);
+                String timeText = hour + ":" + String.format(Locale.getDefault(), "%02d", minute);
 
                 btn_time.setText(timeText);
             }, editDate.getHour(), editDate.getMinute(), true);
             dialog.show();
         });
-    }
-
-    private Uri getUriFromBitmap() {
-        try {
-            // Create a file to store the QR code image
-            File file = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                "qr_code_" + System.currentTimeMillis() + ".png");
-
-            // Write the bitmap to the file
-            FileOutputStream outStream = new FileOutputStream(file);
-            if (bitmap != null) {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 90, outStream);
-                outStream.close();
-            }
-
-            // Get the URI for the file using FileProvider
-            return FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file);
-        } catch (IOException e) {
-            Log.e("QR-Sharing", "getUriFromBitmap: " + e.getMessage());
-        }
-
-        return null;
     }
 }

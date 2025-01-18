@@ -31,6 +31,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="26dp"
         android:layout_marginTop="16dp"
+        android:background="@drawable/usr_button"
         android:text="@string/user_inital"
         android:textColor="@color/black"
         android:textSize="18sp" />

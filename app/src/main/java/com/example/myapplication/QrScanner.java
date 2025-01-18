@@ -58,7 +58,6 @@ public class QrScanner extends AppCompatActivity {
         Button scan_btn = findViewById(R.id.scan_btn);
         Button list = findViewById(R.id.evt_list);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         scan_btn.setOnClickListener(v -> {
             ScanOptions options = new ScanOptions();

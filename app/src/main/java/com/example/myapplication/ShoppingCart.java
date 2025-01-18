@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -34,6 +33,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.HashMap;
 import java.util.Map;
@@ -90,7 +90,7 @@ public class ShoppingCart extends AppCompatActivity {
                 }
                 Log.d("showBoughtEvents", "Number of events: " + eventMap.size());
 
-                // Fetch sales and filter for the current user
+                // Filter sales for the current user
                 String currentUserUID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                 database.getReference().child("sale").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -115,7 +115,6 @@ public class ShoppingCart extends AppCompatActivity {
                             empty.setVisibility(View.GONE);
                         }
 
-                        Log.d("showBoughtEvents", "Number of events: " + arrayList.size());
                         EventAdapter adapter = new EventAdapter(ShoppingCart.this, arrayList, 3);
                         recyclerView.setAdapter(adapter);
 
@@ -137,16 +136,15 @@ public class ShoppingCart extends AppCompatActivity {
                             DecimalFormatSymbols symbols = new DecimalFormatSymbols();
                             symbols.setDecimalSeparator(',');
                             String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
-                            String timeText = dateEvent.getHour() + ":" + String.format("%02d", dateEvent.getMinute());
+                            String timeText = dateEvent.getHour() + ":" + String.format(Locale.getDefault(), "%02d", dateEvent.getMinute());
                             QRGEncoder qrgEncoder = new QRGEncoder(event.getKey(), null, QRGContents.Type.TEXT, 200);
 
-                            // !!!SOS!!! BUG FORSE DELLA LIBRERIA!? I COLORI DEL QR CODE SONO INVERTITI
-                            // Set colors for the QR code
+                            // BUG FORSE DELLA LIBRERIA!? I COLORI DEL QR CODE SONO INVERTITI
                             qrgEncoder.setColorBlack(Color.WHITE);
                             qrgEncoder.setColorWhite(Color.BLACK);
                             Bitmap bitmap = qrgEncoder.getBitmap();
 
-                            // Set text and visibilities
+                            // Set text and visibility
                             title.setText(event.getTitle());
                             place.setText(event.getPlace());
                             desc.setText(event.getDescription());
@@ -173,7 +171,6 @@ public class ShoppingCart extends AppCompatActivity {
                                     }).create();
                             alertDialog.show();
                         });
-
                     }
 
                     @Override

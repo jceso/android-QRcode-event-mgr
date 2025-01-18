@@ -11,8 +11,8 @@ import android.util.Log;
 import android.widget.Button;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.core.content.FileProvider;
-import androidx.lifecycle.LifecycleOwner;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,13 +40,11 @@ public class BasicButtons {
 
         if (user == null) {
             // If the user is not authenticated, navigate to Login
-            Intent intent = new Intent(context, Login.class);
-            context.startActivity(intent);
-            if (context instanceof Activity) {
+            context.startActivity(new Intent(context, Login.class));
+            if (context instanceof Activity)
                 ((Activity) context).finish();
-            }
         } else {
-            // If the user is authenticated, get user info from Firestore
+            // If the user is authenticated, get user info
             FirebaseFirestore fstore = FirebaseFirestore.getInstance();
             fstore.collection("Users").document(user.getUid()).get()
                     .addOnSuccessListener(documentSnapshot -> {
@@ -62,16 +60,11 @@ public class BasicButtons {
                     });
         }
 
-        // Generate random RGB values ensuring brightness and moderate saturation, not vivid colors
-        Random rand = new Random();
-        int r = (int) (Math.min(0.5f + rand.nextFloat() * 0.5f, 0.9f) * 255);
-        int g = (int) (Math.min(0.5f + rand.nextFloat() * 0.5f, 0.9f) * 255);
-        int b = (int) (Math.min(0.5f + rand.nextFloat() * 0.5f, 0.9f) * 255);
-        // Set random color for username button
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setColor((0xFF << 24) | (r << 16) | (g << 8) | b);
-        drawable.setCornerRadius(100);
-        userBtn.setBackground(drawable);
+        userBtn.setOnClickListener(v -> {
+            context.startActivity(new Intent(context, UserProfile.class));
+            if (context instanceof Activity)
+                ((Activity) context).finish();
+        });
     }
 
     // Method to create URI from a Bitmap
@@ -95,19 +88,5 @@ public class BasicButtons {
         }
 
         return null;
-    }
-
-    // Add OnBackPressed callback functionality
-    public static void addOnBackPressedCallback(Context context, Class<?> targetActivity) {
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                // Execute the custom back button action
-                context.startActivity(new Intent(context, targetActivity));
-                if (context instanceof Activity) {
-                    ((Activity) context).finish();
-                }
-            }
-        };
     }
 }

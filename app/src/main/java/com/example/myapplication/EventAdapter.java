@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
@@ -36,7 +37,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         this.context = context;
         this.arrayList = arrayList;
         this.layoutType = layoutType;
-        this.userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        this.userUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         sortEventsByDate();
     }
 

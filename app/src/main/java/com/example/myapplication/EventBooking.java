@@ -65,7 +65,6 @@ public class EventBooking extends AppCompatActivity {
         logout_btn.setOnClickListener(v -> BasicButtons.handleLogoutButton(EventBooking.this));
         Button name_btn = findViewById(R.id.user);
         BasicButtons.checkUserAndSetNameButton(EventBooking.this, name_btn);
-        BasicButtons.addOnBackPressedCallback(EventBooking.this, QrScanner.class);
 
         // Fetch event data from Firebase
         database.getReference().child("event").child(eventUID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -90,7 +89,6 @@ public class EventBooking extends AppCompatActivity {
 
                         String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
                         String timeText = dateEvent.getHour() + ":" + String.format(Locale.getDefault(), "%02d", dateEvent.getMinute());
-
 
                         // Set event data
                         title.setText(event.getTitle());

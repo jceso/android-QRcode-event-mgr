@@ -136,4 +136,10 @@
         android:layout_margin="10dp"
         android:contentDescription="@string/qr_code" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/qrImage"
+        android:text="Show sales" />
+
 </RelativeLayout>

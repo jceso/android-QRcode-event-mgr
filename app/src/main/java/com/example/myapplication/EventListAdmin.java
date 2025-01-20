@@ -212,6 +212,7 @@ public class EventListAdmin extends AppCompatActivity {
                     TextView price = dialogView.findViewById(R.id.price);
                     TextView seats = dialogView.findViewById(R.id.seats);
                     TextView organizer = dialogView.findViewById(R.id.organizer);
+                    Button btn_showSales = dialogView.findViewById(R.id.salesBtn);
                     ImageView qrImage = dialogView.findViewById(R.id.qrImage);
                     LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
 
@@ -238,7 +239,6 @@ public class EventListAdmin extends AppCompatActivity {
                             organizer.setVisibility(View.GONE);
                     });
 
-
                     if (event.getPrice() == 0)
                         price.setText(R.string.free);
                     else
@@ -248,6 +248,12 @@ public class EventListAdmin extends AppCompatActivity {
                     else
                         seats.setHint(String.valueOf(event.getSeats()));
                     qrImage.setImageBitmap(bitmap);
+
+                    btn_showSales.setOnClickListener(v -> {
+                        Intent intent = new Intent(EventListAdmin.this, SalesList.class);
+                        intent.putExtra("event_uid", event.getKey());
+                        startActivity(intent);
+                    });
 
                     AlertDialog alertDialog = new AlertDialog.Builder(EventListAdmin.this)
                             .setTitle("Event Details")

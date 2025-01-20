@@ -126,13 +126,16 @@ public class EventBooking extends AppCompatActivity {
         btn_book.setOnClickListener(v -> {
             // Get the current user's UID
             String user_uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+            Log.d("EventBooking", "User UID: " + user_uid + " | Event UID: " + eventUID);
 
             // Create a new subscription (sale)
             Sale sale = new Sale();
             sale.setEventUID(eventUID);
             sale.setUserUID(user_uid);
-            sale.setTime(LocalDateTime.now().toString());
+            sale.setTime(LocalDateTime.now());
+            sale.setSeat(event.getNum_subs()+1);
             database.getReference().child("sale").push().setValue(sale);
+            Log.d("EventBooking", "Sale added to Firebase");
 
             // Update the event number of subscriptions
             event.addNum_subs();
@@ -149,7 +152,7 @@ public class EventBooking extends AppCompatActivity {
     private void shareSaveBtn(String titleEvent) {
         // Initialize saved event list and set initial icon
         Set<String> savedEventKeys = EventFileManager.loadEvents(this);
-        Log.d("EventBooking", "Saved Event Keys: " + savedEventKeys  + " on the page of "  + eventUID);
+        Log.d("EventBooking", "Saved Event Keys: " + savedEventKeys);
         updateBookmarkIcon(savedEventKeys.contains(eventUID));
 
         // Set SAVE button

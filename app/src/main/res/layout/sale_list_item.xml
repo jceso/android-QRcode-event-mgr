@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardElevation="5dp"
+    app:cardCornerRadius="15dp"
+    android:padding="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/list_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/username"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/list_seat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/list_name"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:text="Seat: #"
+            android:textColor="#575757"
+            android:textSize="15sp"
+            android:singleLine="true"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/list_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_name"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:singleLine="true"
+            android:text="@string/date"
+            android:textColor="#575757"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

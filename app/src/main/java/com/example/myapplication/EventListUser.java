@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -17,10 +18,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -48,9 +52,12 @@ public class EventListUser extends AppCompatActivity {
         logout_btn.setOnClickListener(v -> BasicButtons.handleLogoutButton(EventListUser.this));
         Button name_btn = findViewById(R.id.user);
         BasicButtons.checkUserAndSetNameButton(EventListUser.this, name_btn);
+        ImageButton backButton = findViewById(R.id.back);
+        BasicButtons.handleBackButton(EventListUser.this, backButton);
 
         FloatingActionButton scanButton = findViewById(R.id.scanButton);
-        FloatingActionButton cartButton = findViewById(R.id.cartButton);
+        FloatingActionButton adminButton = findViewById(R.id.adminButton);
+        Button cartButton = findViewById(R.id.cartButton);
 
         scanButton.setOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(), QrScanner.class));
@@ -62,6 +69,7 @@ public class EventListUser extends AppCompatActivity {
             finish();
         });
 
+        checkIfUserIsAdmin(adminButton);
         showEvents();
     }
 
@@ -105,5 +113,35 @@ public class EventListUser extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void checkIfUserIsAdmin(FloatingActionButton adminButton) {
+        // Get current user UID
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            // If the user is authenticated, get user info
+            FirebaseFirestore fstore = FirebaseFirestore.getInstance();
+            fstore.collection("Users").document(currentUser.getUid()).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Log.d("User Info", "Document exists " + documentSnapshot);
+                        String isAdmin = documentSnapshot.getString("isAdmin");
+                        Log.d("User Info", "isAdmin: " + isAdmin);
+                        if ("1".equals(isAdmin)) {
+                            adminButton.setVisibility(View.VISIBLE);    // Make the admin button visible
+
+                            adminButton.setOnClickListener(v -> {
+                                startActivity(new Intent(getApplicationContext(), EventListAdmin.class));
+                                finish();
+                            });
+                        }
+                        else
+                            adminButton.setVisibility(View.GONE);   // Hide the button
+                    } else
+                        Log.d("User Info", "No such document");
+            });
+        } else {
+            adminButton.setVisibility(View.GONE);
+        }
     }
 }

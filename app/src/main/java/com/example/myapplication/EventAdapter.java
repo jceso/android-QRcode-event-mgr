@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -85,6 +87,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
                 holder.price.setText(R.string.free);
             else
                 holder.price.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()));
+        } else if (layoutType == LAYOUT_SALE) {
+            String timeText = date.getHour() + ":" + String.format(Locale.getDefault(), "%02d", date.getMinute());
+            holder.time.setText(timeText);
         }
 
         // Click on items (BOTH LAYOUT)
@@ -101,7 +106,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, date, price;
+        TextView title, date, price, time;
         Button editButton;
 
         public ViewHolder(@NonNull View itemView) {
@@ -111,6 +116,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
             editButton = itemView.findViewById(R.id.btn_edit);  // ADMIN LAYOUT
             price = itemView.findViewById(R.id.list_price);     // USER LAYOUT
+            time = itemView.findViewById(R.id.list_time);       // SALE LAYOUT
         }
     }
 

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -78,6 +79,8 @@ public class EventListAdmin extends AppCompatActivity {
         logout_btn.setOnClickListener(v -> BasicButtons.handleLogoutButton(EventListAdmin.this));
         Button name_btn = findViewById(R.id.user);
         BasicButtons.checkUserAndSetNameButton(EventListAdmin.this, name_btn);
+        ImageButton backButton = findViewById(R.id.back);
+        BasicButtons.handleBackButton(EventListAdmin.this, backButton);
 
         // CRUD setting
         dateInfos = new int[] {1, 1, 1, 1, 1};

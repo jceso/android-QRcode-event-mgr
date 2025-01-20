@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,8 @@ public class QrScanner extends AppCompatActivity {
         logout_btn.setOnClickListener(v -> BasicButtons.handleLogoutButton(QrScanner.this));
         Button name_btn = findViewById(R.id.user);
         BasicButtons.checkUserAndSetNameButton(QrScanner.this, name_btn);
+        ImageButton backButton = findViewById(R.id.back);
+        BasicButtons.handleBackButton(QrScanner.this, backButton);
 
         scannedValue = findViewById(R.id.value);
         Button scan_btn = findViewById(R.id.scan_btn);

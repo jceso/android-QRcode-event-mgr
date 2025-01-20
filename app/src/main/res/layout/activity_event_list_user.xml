@@ -10,19 +10,31 @@
     android:background="#123456"
     tools:context=".EventListUser">
 
+    <ImageButton
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="23dp"
+        android:padding="5dp"
+        android:src="@drawable/arrow_back"
+        android:contentDescription="Back"
+        android:background="@drawable/back_button" />
+
     <Button
         android:id="@+id/logout_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="26dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
+        android:layout_toEndOf="@+id/back"
         android:background="@drawable/neg_button"
         android:padding="10dp"
         android:text="@string/logout"
         android:textColor="@color/white"
         android:textSize="15sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/user"
@@ -52,6 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/title"
+        android:layout_above="@+id/cartButton"
         android:layout_marginTop="10dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="20dp"
@@ -64,16 +77,20 @@
         android:layout_centerInParent="true"
         android:text="@string/empty_list" />
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/cartButton"
+        android:id="@+id/adminButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:contentDescription="Your tickets"
-        app:srcCompat="@drawable/shopping_cart"
-        android:layout_alignParentBottom="true"
+        android:contentDescription="All the events"
+        app:srcCompat="@drawable/list_event"
+        android:layout_above="@+id/cartButton"
         android:layout_alignParentStart="true"
-        android:layout_margin="40dp" />
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="30dp"
+        android:tint="@color/black"
+        android:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/scanButton"
@@ -82,8 +99,25 @@
         android:clickable="true"
         android:contentDescription="Tap to scan events"
         app:srcCompat="@drawable/qr_code_scanner"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/cartButton"
         android:layout_alignParentEnd="true"
-        android:layout_margin="40dp" />
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="30dp" />
+
+    <Button
+        android:id="@+id/cartButton"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginBottom="10dp"
+        android:paddingHorizontal="50dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:text="Your tickets"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/shopping_cart"
+        android:background="@color/secondary" />
 
 </RelativeLayout>

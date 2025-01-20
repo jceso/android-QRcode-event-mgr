@@ -15,27 +15,40 @@
 
         <TextView
             android:id="@+id/list_title"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginVertical="15dp"
             android:paddingBottom="5dp"
-            android:text="@string/title"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:singleLine="true"
+            android:text="@string/title"
+            android:textSize="25sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/list_date"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/list_title"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="5dp"
             android:text="@string/date"
             android:textColor="#575757"
-            android:textSize="15sp"
+            android:textSize="18sp"
+            android:singleLine="true"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/list_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/list_date"
+            android:layout_margin="5dp"
+            android:text="@string/time"
+            android:textColor="#575757"
+            android:textSize="18sp"
             android:singleLine="true"
             android:textStyle="italic" />
 

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -67,6 +68,9 @@ public class EventBooking extends AppCompatActivity {
         logout_btn.setOnClickListener(v -> BasicButtons.handleLogoutButton(EventBooking.this));
         Button name_btn = findViewById(R.id.user);
         BasicButtons.checkUserAndSetNameButton(EventBooking.this, name_btn);
+        ImageButton backButton = findViewById(R.id.back);
+        BasicButtons.handleBackButton(EventBooking.this, backButton);
+
 
         // Fetch event data from Firebase
         database.getReference().child("event").child(eventUID).addListenerForSingleValueEvent(new ValueEventListener() {

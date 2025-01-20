@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -29,6 +30,8 @@ import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
@@ -89,22 +92,54 @@ public class EventBooking extends AppCompatActivity {
 
                         String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
                         String timeText = dateEvent.getHour() + ":" + String.format(Locale.getDefault(), "%02d", dateEvent.getMinute());
+                        List<String> salesList = new ArrayList<>();
 
-                        // Set event data
-                        title.setText(event.getTitle());
-                        place.setText(event.getPlace());
-                        description.setText(event.getDescription());
-                        date.setText(dateText);
-                        time.setText(timeText);
-                        if (event.getNum_subs() < event.getSeats() || event.getSeats() == 0) {
-                            if (event.getPrice() == 0)
-                                btn_book.setText(R.string.free);
-                            else
-                                btn_book.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()) + "€");
-                        } else {
-                            btn_book.setText("Sold out!");
-                            btn_book.setEnabled(false);
-                        }
+                        database.getReference().child("sale").orderByChild("eventUID").equalTo(eventUID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (!snapshot.exists()) {
+                                    Log.d("SalesList", "No sales found for event: " + eventUID);
+                                } else {
+                                    Log.d("SalesList", "Sales found for event: " + eventUID);
+
+                                    for (DataSnapshot saleSnapshot : snapshot.getChildren()) {
+                                        // Retrieve the userUID
+                                        String userUID = saleSnapshot.child("userUID").getValue(String.class);
+                                        salesList.add(userUID);
+                                    }
+
+                                    String currentUserUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    Log.d("EventBooking", "User UID: " + currentUserUID);
+                                    Log.d("EventBooking", "Sales List: " + salesList);
+
+                                    // Set event data
+                                    title.setText(event.getTitle());
+                                    place.setText(event.getPlace());
+                                    description.setText(event.getDescription());
+                                    date.setText(dateText);
+                                    time.setText(timeText);
+                                    Log.d("salesList", "é contenuto" + salesList.contains(currentUserUID));
+                                    if (event.getNum_subs() < event.getSeats() || event.getSeats() == 0 && !salesList.contains(currentUserUID)) {
+                                        if (event.getPrice() == 0)
+                                            btn_book.setText(R.string.free);
+                                        else
+                                            btn_book.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()) + "€");
+                                    } else {
+                                        btn_book.setEnabled(false);
+                                        if (salesList.contains(currentUserUID))
+                                            btn_book.setText("Bought!");
+                                        else
+                                            btn_book.setText("Sold out!");
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                // Handle possible errors
+                                Log.e("SalesList", "Error fetching sales", error.toException());
+                            }
+                        });
 
                         // Set the click listeners
                         bookEvent(eventUID, event);

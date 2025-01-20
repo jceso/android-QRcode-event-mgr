@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
     private static final int LAYOUT_ADMIN = 1, LAYOUT_USER = 2, LAYOUT_SALE = 3;
 
-    private Context context;
-    private int layoutType;
-    private ArrayList<Event> arrayList;
-    private String userUid;
+    private final Context context;
+    private final int layoutType;
+    private final ArrayList<Event> arrayList;
+    private final String userUid;
     private OnEventListener onEventClickListener;
     private OnEditListener onEditClickListener;
 
@@ -59,9 +59,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Event event = arrayList.get(position);
         LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getDate()), ZoneId.systemDefault());
+        String dateText = date.getDayOfMonth() + "/" + date.getMonthValue();
 
         holder.title.setText(event.getTitle());
-        holder.date.setText(date.getDayOfMonth() + "/" + date.getMonthValue());
+        holder.date.setText(dateText);
 
         if (layoutType == LAYOUT_ADMIN) {
             // Edit button (ADMIN LAYOUT)

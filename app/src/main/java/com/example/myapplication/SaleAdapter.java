@@ -1,31 +1,22 @@
 package com.example.myapplication;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.ViewHolder> {
-    private Context context;
+    private final Context context;
     private List<Sale> arrayList;
 
     public SaleAdapter(Context context, List<Sale> arrayList) {
@@ -47,15 +38,12 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.ViewHolder> {
         String seatText = "Seat: " + sale.getSeat();
         String dateText = date.getDayOfMonth() + "/" + date.getMonthValue() + " - " + date.getHour() + ":" + date.getMinute();
 
-        sale.getName(new Sale.OnNameFetchedListener() {
-            @Override
-            public void onNameFetched(String name) {
-                if (name != null) {
-                    Log.d("Sale", "Fetched user name: " + name);
-                    holder.name.setText(name);
-                } else {
-                    Log.d("Sale", "User name not found or error fetching.");
-                }
+        sale.getName(name -> {
+            if (name != null) {
+                Log.d("Sale", "Fetched user name: " + name);
+                holder.name.setText(name);
+            } else {
+                Log.d("Sale", "User name not found or error fetching.");
             }
         });
 

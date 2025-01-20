@@ -1,22 +1,16 @@
 package com.example.myapplication;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -24,32 +18,21 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-
-import androidmads.library.qrgenearator.QRGContents;
-import androidmads.library.qrgenearator.QRGEncoder;
 
 public class SalesList extends AppCompatActivity {
     private FirebaseDatabase database;
     private String eventUID;
     private ArrayList<Sale> salesList = new ArrayList<>();
-    private ArrayList<Sale> filteredSalesList = new ArrayList<>();
+    private final ArrayList<Sale> filteredSalesList = new ArrayList<>();
     private SaleAdapter saleAdapter;
 
     @Override
@@ -129,13 +112,10 @@ public class SalesList extends AppCompatActivity {
                         sale.setUserUID(userUID);
                         sale.setSeat(seat);
                         sale.setTime(saleTime);
-
                         Log.d("SalesList", "Sale: " + sale + "\n user " + sale.getUserUID() + "| time " + sale.getTime() + " | seat " + sale.getSeat());
 
-                        if (sale != null) {
-                            salesList.add(sale);
-                            Log.d("SalesList", "Sale: " + sale);
-                        }
+                        salesList.add(sale);
+                        Log.d("SalesList", "Sale: " + sale);
                     }
                     filterSales("");  // Initially show all sales
                 }
@@ -165,27 +145,24 @@ public class SalesList extends AppCompatActivity {
 
         // Filter the sales based on the search query
         for (Sale sale : salesList) {
-            sale.getName(new Sale.OnNameFetchedListener() {
-                @Override
-                public void onNameFetched(String name) {
-                    // Decrement the counter when name is fetched
-                    remainingItems[0]--;
+            sale.getName(name -> {
+                // Decrement the counter when name is fetched
+                remainingItems[0]--;
 
-                    // Check if the name is found and matches the query (case-insensitive)
-                    if (name != null && name.toLowerCase().contains(query.toLowerCase())) {
-                        filteredSalesList.add(sale);
-                    }
+                // Check if the name is found and matches the query (case-insensitive)
+                if (name != null && name.toLowerCase().contains(query.toLowerCase())) {
+                    filteredSalesList.add(sale);
+                }
 
-                    // If all names have been fetched, update the adapter with the filtered list
-                    if (remainingItems[0] == 0) {
-                        // Sort the filtered list based on time
-                        filteredSalesList.sort((sale1, sale2) -> {
-                            Long date1 = sale1.getTime();
-                            Long date2 = sale2.getTime();
-                            return date1.compareTo(date2); // Ascending order
-                        });
-                        saleAdapter.updateSalesList(filteredSalesList); // Update the adapter
-                    }
+                // If all names have been fetched, update the adapter with the filtered list
+                if (remainingItems[0] == 0) {
+                    // Sort the filtered list based on time
+                    filteredSalesList.sort((sale1, sale2) -> {
+                        Long date1 = sale1.getTime();
+                        Long date2 = sale2.getTime();
+                        return date1.compareTo(date2); // Ascending order
+                    });
+                    saleAdapter.updateSalesList(filteredSalesList); // Update the adapter
                 }
             });
         }

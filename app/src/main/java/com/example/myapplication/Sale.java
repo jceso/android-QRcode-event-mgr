@@ -1,7 +1,5 @@
 package com.example.myapplication;
 
-import android.util.Log;
-
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 

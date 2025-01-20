@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -108,7 +107,7 @@ public class EventBooking extends AppCompatActivity {
                                         salesList.add(userUID);
                                     }
 
-                                    String currentUserUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    String currentUserUID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                                     Log.d("EventBooking", "User UID: " + currentUserUID);
                                     Log.d("EventBooking", "Sales List: " + salesList);
 
@@ -122,8 +121,10 @@ public class EventBooking extends AppCompatActivity {
                                     if (event.getNum_subs() < event.getSeats() || event.getSeats() == 0 && !salesList.contains(currentUserUID)) {
                                         if (event.getPrice() == 0)
                                             btn_book.setText(R.string.free);
-                                        else
-                                            btn_book.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()) + "€");
+                                        else {
+                                            String priceText = new DecimalFormat("#0.00", symbols).format(event.getPrice()) + "€";
+                                            btn_book.setText(priceText);
+                                        }
                                     } else {
                                         btn_book.setEnabled(false);
                                         if (salesList.contains(currentUserUID))

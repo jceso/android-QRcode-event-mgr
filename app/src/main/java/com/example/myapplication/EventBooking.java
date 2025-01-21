@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -122,7 +121,7 @@ public class EventBooking extends AppCompatActivity {
                                     date.setText(dateText);
                                     time.setText(timeText);
                                     Log.d("salesList", "é contenuto" + salesList.contains(currentUserUID));
-                                    if (event.getNum_subs() < event.getSeats() || event.getSeats() == 0 && !salesList.contains(currentUserUID)) {
+                                    if (event.getNum_subs() < event.getSeats() || event.getSeats() == 0 || !event.getOrganizer().equals(currentUserUID) && !salesList.contains(currentUserUID)) {
                                         if (event.getPrice() == 0)
                                             btn_book.setText(R.string.free);
                                         else {
@@ -132,9 +131,9 @@ public class EventBooking extends AppCompatActivity {
                                     } else {
                                         btn_book.setEnabled(false);
                                         if (salesList.contains(currentUserUID))
-                                            btn_book.setText("Bought!");
+                                            btn_book.setText(R.string.bought);
                                         else
-                                            btn_book.setText("Sold out!");
+                                            btn_book.setText(R.string.sold_out);
                                     }
                                 }
                             }
@@ -184,7 +183,7 @@ public class EventBooking extends AppCompatActivity {
                     .addOnFailureListener(e -> Toast.makeText(EventBooking.this, "Error updating event", Toast.LENGTH_SHORT).show());
 
             btn_book.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.subscribed, 0);
-            btn_book.setText("Booked!");
+            btn_book.setText(R.string.bought);
             btn_book.setEnabled(false);
         });
     }

@@ -19,7 +19,7 @@
         android:layout_marginTop="23dp"
         android:padding="5dp"
         android:src="@drawable/arrow_back"
-        android:contentDescription="Back"
+        android:contentDescription="@string/back"
         android:background="@drawable/back_button" />
 
     <Button
@@ -117,7 +117,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
         android:layout_above="@+id/edit_btn"
-        android:text="Questo utente è un organizzatore"
+        android:text="@string/user_organizer"
         android:textSize="20sp"
         android:gravity="center"
         android:visibility="gone" />
@@ -130,7 +130,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginHorizontal="15dp"
         android:padding="25dp"
-        android:text="Edit profile"
+        android:text="@string/edit"
         android:textSize="25sp"
         android:textStyle="bold"
         app:drawableEndCompat="@drawable/edit"

@@ -19,7 +19,7 @@
         android:layout_marginTop="23dp"
         android:padding="5dp"
         android:src="@drawable/arrow_back"
-        android:contentDescription="Back"
+        android:contentDescription="@string/back"
         android:background="@drawable/back_button" />
 
     <Button
@@ -101,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_marginHorizontal="20dp"
-            android:text="Bought tickets"
+            android:text="@string/tickets"
             android:textSize="22sp"
             android:textStyle="bold" />
 

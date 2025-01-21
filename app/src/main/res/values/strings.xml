@@ -34,4 +34,16 @@
     <string name="user_inital">U</string>
     <string name="share">Share</string>
     <string name="empty_list">List is empty!</string>
+    <string name="bought">Bought!</string>
+    <string name="sold_out">Sold out!</string>
+    <string name="booked">Booked!</string>
+    <string name="back">Back</string>
+    <string name="all_events">All the events</string>
+    <string name="tickets">Your tickets</string>
+    <string name="acc_icon">Account icon</string>
+    <string name="search_user">Search by User name</string>
+    <string name="user_organizer">This user is an organizer</string>
+    <string name="show_sales">Show sales</string>
+    <string name="edit">Edit</string>
+    <string name="seat">Seat: #</string>
 </resources>

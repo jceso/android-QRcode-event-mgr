@@ -19,7 +19,7 @@
         android:layout_marginTop="23dp"
         android:padding="5dp"
         android:src="@drawable/arrow_back"
-        android:contentDescription="Back"
+        android:contentDescription="@string/back"
         android:background="@drawable/back_button" />
 
     <Button
@@ -56,7 +56,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="30dp"
         android:padding="10dp"
-        android:hint="Search by Username"
+        android:hint="@string/search_user"
         android:textSize="18sp"
         android:inputType="text" />
 

@@ -19,7 +19,7 @@
         android:layout_marginTop="23dp"
         android:padding="5dp"
         android:src="@drawable/arrow_back"
-        android:contentDescription="Back"
+        android:contentDescription="@string/back"
         android:background="@drawable/back_button" />
 
     <Button
@@ -55,7 +55,7 @@
         android:layout_below="@+id/logout_btn"
         android:layout_marginTop="15dp"
         android:layout_marginHorizontal="50dp"
-        android:text="Saved events"
+        android:text="@string/booked_list"
         android:textSize="30sp"
         android:textStyle="bold|italic" />
 
@@ -83,7 +83,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:contentDescription="All the events"
+        android:contentDescription="@string/all_events"
         app:srcCompat="@drawable/list_event"
         android:layout_above="@+id/cartButton"
         android:layout_alignParentStart="true"
@@ -97,7 +97,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:contentDescription="Tap to scan events"
+        android:contentDescription="@string/scan_code"
         app:srcCompat="@drawable/qr_code_scanner"
         android:layout_above="@+id/cartButton"
         android:layout_alignParentEnd="true"
@@ -114,7 +114,7 @@
         android:paddingHorizontal="50dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:text="Your tickets"
+        android:text="@string/tickets"
         android:textSize="25sp"
         android:textStyle="bold"
         app:drawableStartCompat="@drawable/shopping_cart"

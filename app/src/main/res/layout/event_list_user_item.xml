@@ -15,7 +15,7 @@
 
         <TextView
             android:id="@+id/list_title"
-            android:layout_width="230dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:paddingBottom="5dp"
@@ -28,7 +28,7 @@
 
         <TextView
             android:id="@+id/list_date"
-            android:layout_width="225dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/list_title"
             android:layout_marginStart="10dp"

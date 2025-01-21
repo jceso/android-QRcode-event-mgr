@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -74,6 +75,8 @@ public class SalesList extends AppCompatActivity {
         logout_btn.setOnClickListener(v -> BasicButtons.handleLogoutButton(SalesList.this));
         Button name_btn = findViewById(R.id.user);
         BasicButtons.checkUserAndSetNameButton(SalesList.this, name_btn);
+        ImageButton backButton = findViewById(R.id.back);
+        BasicButtons.handleBackButton(SalesList.this, backButton);
 
         // Search functionality
         EditText searchInput = findViewById(R.id.search_input);

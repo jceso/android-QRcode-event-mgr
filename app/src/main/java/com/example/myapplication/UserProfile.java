@@ -3,11 +3,14 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -37,8 +40,11 @@ public class UserProfile extends AppCompatActivity {
         logout_btn.setOnClickListener(v -> BasicButtons.handleLogoutButton(UserProfile.this));
         Button name_btn = findViewById(R.id.user);
         BasicButtons.checkUserAndSetNameButton(UserProfile.this, name_btn);
+        ImageButton backButton = findViewById(R.id.back);
+        BasicButtons.handleBackButton(UserProfile.this, backButton);
 
         showDetails();
+        btnSetting();
     }
 
     private void showDetails() {
@@ -73,5 +79,35 @@ public class UserProfile extends AppCompatActivity {
                             Log.d("User Info", "No such document");
                     });
         }
+    }
+
+    private void btnSetting() {
+        Button edit_btn = findViewById(R.id.edit_btn);
+        Button delete_btn = findViewById(R.id.delete_btn);
+
+        edit_btn.setOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(), EditProfile.class));
+            finish();
+        });
+
+        delete_btn.setOnClickListener(v -> {
+            View dialogView = LayoutInflater.from(UserProfile.this).inflate(R.layout.warning_dialog, null);
+            Button delete = dialogView.findViewById(R.id.delete_btn);
+            Button cancel = dialogView.findViewById(R.id.cancel_btn);
+
+            AlertDialog alertDialog = new AlertDialog.Builder(UserProfile.this)
+                    .setView(dialogView)
+                    .create();
+            alertDialog.show();
+
+            // Cancel button
+            cancel.setOnClickListener(v1 -> alertDialog.dismiss());
+
+            // Delete confirmation button
+            delete.setOnClickListener(v2 -> {
+                // Search and delete all occurrences of the user
+            });
+        });
+
     }
 }

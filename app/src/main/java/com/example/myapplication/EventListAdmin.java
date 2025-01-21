@@ -112,29 +112,54 @@ public class EventListAdmin extends AppCompatActivity {
         dateDialog(btn_date, btn_time, LocalDateTime.now());
 
         AlertDialog addDialog = new AlertDialog.Builder(EventListAdmin.this)
-                .setTitle("Add event")
-                .setView(dialogView) // This is your custom dialog view
-                .setCancelable(false)
-                .setPositiveButton("Create Event", null) // We will handle the click manually
-                .setNeutralButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .create();
-
+            .setTitle("Add event")
+            .setView(dialogView)
+            .setCancelable(false)
+            .setPositiveButton("Create Event", null) // We will handle the click manually
+            .setNeutralButton("Cancel", (dialog, which) -> dialog.dismiss())
+            .create();
 
         // Set a listener for the positive button after the dialog is created
         addDialog.setOnShowListener(d -> addDialog
-                .getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-            // Check if title, place, and description are empty
-            if (title.getText().toString().trim().isEmpty())
-                title.setError("Title is required");
-            else if (place.getText().toString().trim().isEmpty())
-                place.setError("Place is required");
-            else if (btn_date.getText().toString().equals("Date"))
-                btn_date.setError("Date is required");
-            else if (btn_time.getText().toString().equals("Time"))
-                btn_time.setError("Time is required");
-            else if (desc.getText().toString().trim().isEmpty())
-                desc.setError("Description is required");
-            else {
+            .getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+                boolean isValid = true;
+
+                // Check if title, place, and description are empty
+                if (title.getText().toString().trim().isEmpty()) {
+                    title.setError("Title is required");
+                    isValid = false;
+                } else
+                    title.setError(null);
+
+                if (place.getText().toString().trim().isEmpty()) {
+                    place.setError("Place is required");
+                    isValid = false;
+                } else
+                    place.setError(null);
+
+                if (btn_date.getText().toString().equals("Date")) {
+                    btn_date.setError("Date is required");
+                    isValid = false;
+                } else
+                    btn_date.setError(null);
+
+                if (btn_time.getText().toString().equals("Time")) {
+                    btn_time.setError("Time is required");
+                    isValid = false;
+                } else
+                    btn_time.setError(null);
+
+                if (desc.getText().toString().trim().isEmpty()) {
+                    desc.setError("Description is required");
+                    isValid = false;
+                } else
+                    desc.setError(null);
+
+                // If any input is invalid, don't dismiss the dialog
+                if (!isValid)
+                    return;
+
+                // Proceed with saving the event if all validations are passed
                 ProgressBar progressBar = findViewById(R.id.progress_bar);
                 progressBar.setVisibility(View.VISIBLE);
                 Event event = new Event();
@@ -158,6 +183,7 @@ public class EventListAdmin extends AppCompatActivity {
                 event.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
                 event.setOrganizer(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
 
+                // Save event to Firebase
                 database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
@@ -166,10 +192,9 @@ public class EventListAdmin extends AppCompatActivity {
                     Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
                 });
 
-                addDialog.dismiss(); // Close the dialog after event creation
-            }
+                // Close the dialog after event creation
+                addDialog.dismiss();
         }));
-
         addDialog.show();
     }
 
@@ -337,47 +362,62 @@ public class EventListAdmin extends AppCompatActivity {
                     // Set a listener for the positive button after the dialog is created
                     editDialog.setOnShowListener(d -> editDialog
                             .getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+                        boolean isValid = true;
+
                         // Check if title, place, and description are empty
-                        if (title.getText().toString().trim().isEmpty())
+                        if (title.getText().toString().trim().isEmpty()) {
                             title.setError("Title is required");
-                        else if (place.getText().toString().trim().isEmpty())
+                            isValid = false;
+                        } else
+                            title.setError(null);
+
+                        if (place.getText().toString().trim().isEmpty()) {
                             place.setError("Place is required");
-                        else if (desc.getText().toString().trim().isEmpty())
+                            isValid = false;
+                        } else place.setError(null);
+
+                        if (desc.getText().toString().trim().isEmpty()) {
                             desc.setError("Description is required");
-                        else {
-                            progressBar.setVisibility(View.VISIBLE);
-                            Event eventUpd = new Event();
+                            isValid = false;
+                        } else
+                            desc.setError(null);
 
-                            // Price and availability setting
-                            if (!price.getText().toString().isEmpty())
-                                eventUpd.setPrice(Float.parseFloat(price.getText().toString()));
-                            else if (price.getHint() == "Free")
-                                eventUpd.setSeats(0);
-                            else
-                                eventUpd.setPrice(Float.parseFloat(price.getHint().toString()));
-                            if (!seats.getText().toString().isEmpty())
-                                eventUpd.setSeats(Integer.parseInt(seats.getText().toString()));
-                            else if (seats.getHint() == "No limits")
-                                eventUpd.setSeats(0);
-                            else
-                                eventUpd.setSeats(Integer.parseInt(seats.getHint().toString()));
+                        // Don't proceed to save if validation fails
+                        if (!isValid)
+                            return;
 
-                            // Rest of event setting
-                            eventUpd.setTitle(title.getText().toString());
-                            eventUpd.setPlace(place.getText().toString());
-                            eventUpd.setDescription(desc.getText().toString());
-                            eventUpd.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
+                        progressBar.setVisibility(View.VISIBLE);
+                        Event eventUpd = new Event();
 
-                            database.getReference().child("event").child(event.getKey()).setValue(eventUpd).addOnSuccessListener(unused -> {
-                                progressBar.setVisibility(View.GONE);
-                                Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
-                            }).addOnFailureListener(e -> {
-                                progressBar.setVisibility(View.GONE);
-                                Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
-                            });
+                        // Price and availability setting
+                        if (!price.getText().toString().isEmpty())
+                            eventUpd.setPrice(Float.parseFloat(price.getText().toString()));
+                        else if (price.getHint() == "Free")
+                            eventUpd.setSeats(0);
+                        else
+                            eventUpd.setPrice(Float.parseFloat(price.getHint().toString()));
+                        if (!seats.getText().toString().isEmpty())
+                            eventUpd.setSeats(Integer.parseInt(seats.getText().toString()));
+                        else if (seats.getHint() == "No limits")
+                            eventUpd.setSeats(0);
+                        else
+                            eventUpd.setSeats(Integer.parseInt(seats.getHint().toString()));
 
-                            editDialog.dismiss();
-                        }
+                        // Rest of event setting
+                        eventUpd.setTitle(title.getText().toString());
+                        eventUpd.setPlace(place.getText().toString());
+                        eventUpd.setDescription(desc.getText().toString());
+                        eventUpd.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
+
+                        database.getReference().child("event").child(event.getKey()).setValue(eventUpd).addOnSuccessListener(unused -> {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(EventListAdmin.this, "Saved successfully", Toast.LENGTH_SHORT).show();
+                        }).addOnFailureListener(e -> {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(EventListAdmin.this, "There was an error while saving data", Toast.LENGTH_SHORT).show();
+                        });
+
+                        editDialog.dismiss();
                     }));
 
                     editDialog.show();

@@ -126,8 +126,8 @@
         android:id="@+id/edit_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/delete_btn"
-        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
         android:layout_marginHorizontal="15dp"
         android:padding="25dp"
         android:text="@string/edit"
@@ -138,6 +138,7 @@
         android:drawableTint="@color/white"
         android:background="@color/secondary"/>
 
+    <!--
     <Button
         android:id="@+id/delete_btn"
         android:layout_width="match_parent"
@@ -152,5 +153,7 @@
         android:textStyle="bold"
         app:drawableEndCompat="@drawable/delete"
         android:background="@color/negative" />
+
+     -->
 
 </RelativeLayout>

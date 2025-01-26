@@ -42,7 +42,6 @@ public class EditProfile extends AppCompatActivity {
         });
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-
         Button cancelBtn = findViewById(R.id.cancel_btn);
         cancelBtn.setOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(), UserProfile.class));
@@ -123,7 +122,7 @@ public class EditProfile extends AppCompatActivity {
                     .getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v1 -> {
                         boolean isValid = true;
 
-                        if (newPw1.getText().toString().trim().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$\n")) {
+                        if (newPw1.getText().toString().trim().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
                             newPw1.setError("At least 8 characters, one capital letter, one number and one special character");
                             isValid = false;
                         } else

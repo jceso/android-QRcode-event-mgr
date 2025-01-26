@@ -24,7 +24,6 @@ public class BasicButtons {
 
     public static void handleBackButton(final Activity activity, ImageButton backButton) {
         backButton.setOnClickListener(v -> {
-            // Finish the current activity and go back
             activity.finish();
         });
     }

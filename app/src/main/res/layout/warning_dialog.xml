@@ -30,15 +30,28 @@
         android:justificationMode="inter_word"
         android:textColor="@color/black" />
 
+    <EditText
+        android:id="@+id/currPw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/info"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="30dp"
+        android:padding="15dp"
+        android:drawablePadding="10dp"
+        android:hint="@string/curr_password"
+        android:inputType="textPassword"
+        android:textSize="22sp"
+        android:textStyle="italic" />
 
 
     <RelativeLayout
         android:id="@+id/infosLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/info"
+        android:layout_below="@+id/currPw"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp">
 
         <Button

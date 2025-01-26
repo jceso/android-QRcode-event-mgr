@@ -69,21 +69,34 @@ public class Register extends AppCompatActivity {
 
         reg_btn.setOnClickListener(v -> {
             String name, email, password, phone;
-            name = String.valueOf(nameInput.getText());
-            email = String.valueOf(emailInput.getText());
-            password = String.valueOf(passwordInput.getText());
-            phone = phoneInput.getText().toString();
+            name = nameInput.getText().toString().trim();
+            email = emailInput.getText().toString().trim();
+            password = passwordInput.getText().toString().trim();
+            phone = phoneInput.getText().toString().trim();
 
-            if (TextUtils.isEmpty(email)) {
-                Toast.makeText(Register.this, "Enter email", Toast.LENGTH_SHORT).show();
+            if (name.isEmpty()) {
+                nameInput.setError("Name is required");
                 return;
-            } if (TextUtils.isEmpty(password)) {
-                Toast.makeText(Register.this, "Enter password", Toast.LENGTH_SHORT).show();
+            } else
+                nameInput.setError(null);
+
+            if (email.isEmpty() || !email.matches("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
+                emailInput.setError("Invalid email format");
                 return;
-            } if (TextUtils.isEmpty(phone)) {
-                Toast.makeText(Register.this, "Enter phone number", Toast.LENGTH_SHORT).show();
+            } else
+                emailInput.setError(null);
+
+            if (password.isEmpty() || !password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
+                passwordInput.setError("At least 8 characters, one capital letter, one number and one special character");
                 return;
-            }
+            } else
+                passwordInput.setError(null);
+
+            if (phone.isEmpty() || !phone.matches("^[+]?[0-9]{1,4}?[0-9]{7,10}$")) {
+                phoneInput.setError("Phone number is required and has to be a real number");
+                return;
+            } else
+                phoneInput.setError(null);
 
             fAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {

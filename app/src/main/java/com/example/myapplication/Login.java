@@ -60,17 +60,26 @@ public class Login extends AppCompatActivity {
 
         log_btn.setOnClickListener(v -> {
             String email, password;
-            email = String.valueOf(emailInput.getText());
-            password = String.valueOf(passwordInput.getText());
+            email = emailInput.getText().toString().trim();
+            password = passwordInput.getText().toString().trim();
 
-            if (TextUtils.isEmpty(email)) {
-                Toast.makeText(Login.this, "Enter email", Toast.LENGTH_SHORT).show();
+            if (email.isEmpty()) {
+                emailInput.setError("Enter email");
                 return;
-            }
-            if (TextUtils.isEmpty(password)) {
-                Toast.makeText(Login.this, "Enter password", Toast.LENGTH_SHORT).show();
+            } else if (!email.matches("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
+                emailInput.setError("Invalid email format");
                 return;
-            }
+            } else
+                emailInput.setError(null);
+
+            if (password.isEmpty()) {
+                passwordInput.setError("Enter password");
+                return;
+            } else if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
+                passwordInput.setError("At least 8 characters, one capital letter, one number and one special character");
+                return;
+            } else
+                passwordInput.setError(null);
 
             fAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
                 Toast.makeText(Login.this, "Login successful!", Toast.LENGTH_SHORT).show();

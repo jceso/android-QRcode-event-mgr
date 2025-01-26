@@ -100,7 +100,7 @@ public class EventBooking extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (!snapshot.exists()) {
-                                    Log.d("SalesList", "No sales found for event: " + eventUID);
+                                    Log.e("SalesList", "No sales found for event: " + eventUID);
                                 } else {
                                     Log.d("SalesList", "Sales found for event: " + eventUID);
 
@@ -111,8 +111,6 @@ public class EventBooking extends AppCompatActivity {
                                     }
 
                                     String currentUserUID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-                                    Log.d("EventBooking", "User UID: " + currentUserUID);
-                                    Log.d("EventBooking", "Sales List: " + salesList);
 
                                     // Set event data
                                     title.setText(event.getTitle());
@@ -120,7 +118,6 @@ public class EventBooking extends AppCompatActivity {
                                     description.setText(event.getDescription());
                                     date.setText(dateText);
                                     time.setText(timeText);
-                                    Log.d("salesList", "é contenuto" + salesList.contains(currentUserUID));
                                     if (event.getNum_subs() < event.getSeats() || event.getSeats() == 0 || !event.getOrganizer().equals(currentUserUID) && !salesList.contains(currentUserUID)) {
                                         if (event.getPrice() == 0)
                                             btn_book.setText(R.string.free);
@@ -199,14 +196,10 @@ public class EventBooking extends AppCompatActivity {
             if (savedEventKeys.contains(eventUID)) {
                 // REMOVE EVENT FROM SAVED EVENT
                 savedEventKeys.remove(eventUID);
-                Log.d("EventBooking", "Removed event with key: " + eventUID + " | OR | "  + event.getKey());
-                Log.d("EventBooking", "Saved Event Keys: " + savedEventKeys);
                 Toast.makeText(this, "Event removed from saved events", Toast.LENGTH_SHORT).show();
             } else {
                 // ADD EVENT TO SAVED EVENT
                 savedEventKeys.add(eventUID);
-                Log.d("EventBooking", "Added event with key: " + eventUID + " | OR | " + event.getKey());
-                Log.d("EventBooking", "Saved Event Keys: " + savedEventKeys);
                 Toast.makeText(this, "Event added to saved events", Toast.LENGTH_SHORT).show();
             }
 

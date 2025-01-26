@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -9,13 +10,19 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -29,11 +36,36 @@ public class QrScanner extends AppCompatActivity {
                     Toast.makeText(QrScanner.this, "Cancelled", Toast.LENGTH_LONG).show();
                 else {
                     scannedValue.setText(result.getContents());
-                    // Pass the scanned value to EventBooking activity
-                    Intent intent = new Intent(getApplicationContext(), EventBooking.class);
-                    intent.putExtra("event_uid", result.getContents()); // Put the scanned QR code content in the intent
-                    startActivity(intent);
-                    finish();
+
+                    // Firebase setting
+                    FirebaseApp.initializeApp(QrScanner.this);
+                    FirebaseDatabase database = FirebaseDatabase.getInstance("https://ing-soft-firebase-default-rtdb.europe-west1.firebasedatabase.app/");
+
+                    database.getReference().child("event").child(result.getContents()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Long eventTimestamp = snapshot.child("date").getValue(Long.class);
+                            long currentTimestamp = System.currentTimeMillis();
+
+                            Log.d("TimestampCompare","Evento: " + eventTimestamp + " | Ora: " + currentTimestamp);
+                            if (eventTimestamp != null && eventTimestamp < currentTimestamp)
+                                Toast.makeText(QrScanner.this, "Event has already passed", Toast.LENGTH_SHORT).show();
+                            else {
+                                Toast.makeText(QrScanner.this, "Event found", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), EventBooking.class);
+                                intent.putExtra("event_uid", result.getContents()); // Put the scanned QR code content in the intent
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("EventBooking", "Error fetching event: " + error.getMessage());
+                        }
+                    });
+
+
                 }
             });
 

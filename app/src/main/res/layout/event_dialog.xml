@@ -132,7 +132,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/organizer"
-        android:text="@string/show_sales" />
+        android:layout_marginHorizontal="10dp"
+        android:text="@string/show_sales"
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="#A0A0A0" />
 
     <ImageView
         android:id="@+id/qrImage"

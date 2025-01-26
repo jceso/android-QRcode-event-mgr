@@ -120,8 +120,8 @@ public class EventListUser extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             // If the user is authenticated, get user info
-            FirebaseFirestore fstore = FirebaseFirestore.getInstance();
-            fstore.collection("Users").document(currentUser.getUid()).get()
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            firestore.collection("Users").document(currentUser.getUid()).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         Log.d("User Info", "Document exists " + documentSnapshot);

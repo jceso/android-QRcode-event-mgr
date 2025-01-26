@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="32dp"
+        android:autofillHints="email@provider.domain"
         android:background="@drawable/rounded_corner"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
@@ -36,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="16dp"
+        android:autofillHints="password"
         android:background="@drawable/rounded_corner"
         android:hint="@string/password"
         android:inputType="textPassword"
@@ -52,8 +54,9 @@
         android:layout_marginTop="32dp"
         android:padding="18dp"
         android:text="@string/login"
-        android:textColor="#3B84F1"
-        android:textSize="20sp" />
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:background="@drawable/rounded_button" />
 
     <TextView
         android:id="@+id/reg_now"

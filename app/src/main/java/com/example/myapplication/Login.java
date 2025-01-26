@@ -17,7 +17,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
@@ -27,7 +26,6 @@ public class Login extends AppCompatActivity {
     Button log_btn;
     TextView regNow;
     FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
 
     @Override
     public void onStart() {
@@ -77,23 +75,27 @@ public class Login extends AppCompatActivity {
             fAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
                 Toast.makeText(Login.this, "Login successful!", Toast.LENGTH_SHORT).show();
                 checkLevelAccess(Objects.requireNonNull(authResult.getUser()).getUid());
-            });
+            }).addOnFailureListener(e -> Toast.makeText(Login.this, "No user found with these credentials", Toast.LENGTH_SHORT).show());
         });
     }
 
     private void checkLevelAccess(String uid) {
-        DocumentReference dr = fStore.collection("Users").document(uid);
-        dr.get().addOnSuccessListener(documentSnapshot -> {
-            Log.d("TAG", "OnSuccess: " + documentSnapshot.getData());
-            if (Objects.equals(documentSnapshot.getString("isAdmin"), "1")) {
-                //User is admin
-                startActivity(new Intent(getApplicationContext(), EventListAdmin.class));
-                finish();
-            } else {
-                //Normal user
-                startActivity(new Intent(getApplicationContext(), QrScanner.class));
-                finish();
-            }
+        Log.d("Login","ID: " + uid);
+
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        firestore.collection("Users").document(uid).get()
+            .addOnSuccessListener(documentSnapshot -> {
+                Log.d("TAG", "OnSuccess: " + documentSnapshot.getData());
+                if (Objects.equals(documentSnapshot.getString("isAdmin"), "1")) {
+                    //User is admin
+                    startActivity(new Intent(getApplicationContext(), EventListAdmin.class));
+                    finish();
+                } else {
+                    //Normal user
+                    startActivity(new Intent(getApplicationContext(), QrScanner.class));
+                    finish();
+                }
         });
     }
 }

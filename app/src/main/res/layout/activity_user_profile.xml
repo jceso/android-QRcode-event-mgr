@@ -131,9 +131,11 @@
         android:layout_marginHorizontal="15dp"
         android:padding="25dp"
         android:text="@string/edit"
+        android:textColor="@color/white"
         android:textSize="25sp"
         android:textStyle="bold"
         app:drawableEndCompat="@drawable/edit"
+        android:drawableTint="@color/white"
         android:background="@color/secondary"/>
 
     <Button

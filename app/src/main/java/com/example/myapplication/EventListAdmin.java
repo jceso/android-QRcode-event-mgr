@@ -125,14 +125,14 @@ public class EventListAdmin extends AppCompatActivity {
                 boolean isValid = true;
 
                 // Check if title, place, and description are empty
-                if (title.getText().toString().trim().isEmpty()) {
-                    title.setError("Title is required");
+                if (title.getText().toString().trim().isEmpty() || title.getText().toString().length() > 20) {
+                    title.setError("Title is required and must have less than 20 characters");
                     isValid = false;
                 } else
                     title.setError(null);
 
-                if (place.getText().toString().trim().isEmpty()) {
-                    place.setError("Place is required");
+                if (place.getText().toString().trim().isEmpty() || place.getText().toString().length() > 20) {
+                    place.setError("Place is required and must have less than 20 characters");
                     isValid = false;
                 } else
                     place.setError(null);
@@ -154,6 +154,19 @@ public class EventListAdmin extends AppCompatActivity {
                     isValid = false;
                 } else
                     desc.setError(null);
+
+                if (!price.getText().toString().trim().isEmpty() && !price.getText().toString().trim().matches("^\\d+(\\.\\d{1,2})?$")) {
+                    price.setError("Price must be a valid number (ex 12, 12.3, 12.34");
+                    isValid = false;
+                } else
+                    price.setError(null);
+
+                if (!seats.getText().toString().trim().isEmpty() && !(Integer.parseInt(seats.getText().toString().trim()) <= 0)) {
+                    seats.setError("Availability must be greater than 0");
+                    isValid = false;
+                } else {
+                    seats.setError(null);
+                }
 
                 // If any input is invalid, don't dismiss the dialog
                 if (!isValid)
@@ -228,7 +241,7 @@ public class EventListAdmin extends AppCompatActivity {
                 EventAdapter adapter = new EventAdapter(EventListAdmin.this, arrayList, 1);
                 recyclerView.setAdapter(adapter);
 
-                // Show details of event on dialog
+                // SHOW details of event on dialog
                 adapter.setOnEventListener(event -> {
                     // Setting view and finding XML elements
                     View dialogView = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.event_dialog, null);
@@ -308,7 +321,7 @@ public class EventListAdmin extends AppCompatActivity {
                     alertDialog.show();
                 });
 
-                // Edit details of event on dialog
+                // EDIT details of event on dialog
                 adapter.setOnEditListener(event -> {
                     // Setting view and finding XML elements
                     View dialogView = LayoutInflater.from(EventListAdmin.this).inflate(R.layout.add_event_dialog, null);

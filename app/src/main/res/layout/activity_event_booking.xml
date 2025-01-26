@@ -140,7 +140,8 @@
         android:textSize="25sp"
         android:textStyle="bold"
         app:drawableEndCompat="@drawable/shopping_cart"
-        android:background="#FA20BD" />
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="#FA20BD" />
 
     <RelativeLayout
         android:id="@+id/save_share"
@@ -158,10 +159,10 @@
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/share"
             android:layout_marginEnd="10dp"
-            android:background="@color/secondary"
             android:src="@drawable/bookmark_empty"
             android:scaleType="center"
-            android:contentDescription="Save" />
+            android:contentDescription="Save"
+            android:background="@drawable/rounded_button" />
 
         <Button
             android:id="@+id/share"
@@ -174,7 +175,8 @@
             android:textSize="25sp"
             android:textStyle="bold"
             app:drawableStartCompat="@drawable/share"
-            android:background="@color/primary" />
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/primary" />
 
     </RelativeLayout>
 

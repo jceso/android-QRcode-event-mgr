@@ -43,17 +43,16 @@ public class BasicButtons {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user == null) {
-            // If the user is not authenticated, navigate to Login
             context.startActivity(new Intent(context, Login.class));
             if (context instanceof Activity)
                 ((Activity) context).finish();
         } else {
             // If the user is authenticated, get user info
-            FirebaseFirestore fstore = FirebaseFirestore.getInstance();
-            fstore.collection("Users").document(user.getUid()).get()
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            firestore.collection("Users").document(user.getUid()).get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-                            // Get the name from the Firestore document and set to button
+                            // Get the name from the FireStore document and set to button
                             String name = documentSnapshot.getString("UserName");
                             if (name != null && !name.isEmpty()) {
                                 userBtn.setText(name.substring(0, 1));  // First letter of the name

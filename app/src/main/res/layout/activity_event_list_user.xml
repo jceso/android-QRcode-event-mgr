@@ -118,6 +118,6 @@
         android:textSize="25sp"
         android:textStyle="bold"
         app:drawableStartCompat="@drawable/shopping_cart"
-        android:background="@color/secondary" />
+        android:background="@drawable/rounded_button" />
 
 </RelativeLayout>

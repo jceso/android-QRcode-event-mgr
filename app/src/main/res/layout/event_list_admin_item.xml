@@ -15,20 +15,18 @@
 
         <TextView
             android:id="@+id/list_title"
-            android:layout_width="230dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:paddingBottom="5dp"
             android:text="@string/title"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:singleLine="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" /> <!-- ?attr/colorPrimary -->
+            android:singleLine="true" /> <!-- ?attr/colorPrimary -->
 
         <TextView
             android:id="@+id/list_date"
-            android:layout_width="225dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/list_title"
             android:layout_marginStart="10dp"
@@ -45,10 +43,11 @@
             android:drawableEnd="@drawable/edit"
             android:drawablePadding="10dp"
             android:gravity="end|center_vertical"
-            android:padding="7dp"
+            android:padding="10dp"
             android:text="@string/edit"
-            android:textColor="#575757"
-            android:textSize="17sp" />
+            android:textSize="17sp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="#A0A0A0"/>
 
         <!--
         <TextView

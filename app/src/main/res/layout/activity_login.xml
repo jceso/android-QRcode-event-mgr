@@ -29,7 +29,8 @@
         android:padding="18dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:maxLength="20" />
 
     <EditText
         android:id="@+id/password"
@@ -44,7 +45,8 @@
         android:padding="18dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:maxLength="20" />
 
     <Button
         android:id="@+id/login_btn"

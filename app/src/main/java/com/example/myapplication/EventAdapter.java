@@ -125,19 +125,28 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     }
 
     private void sortEventsByDate() {
-        LocalDateTime now = LocalDateTime.now();
+        List<Event> eventsToSort;
 
-        // Filter out the events that are before the current time
-        List<Event> futureEvents = arrayList.stream()
-                .filter(event -> event.getDate() > now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).sorted((event1, event2) -> {
-                    Long date1 = event1.getDate();
-                    Long date2 = event2.getDate();
-                    return date1.compareTo(date2); // Ascending order
-                }).collect(Collectors.toList());
+        if (layoutType == 1)            // ADMIN
+            eventsToSort = arrayList;   // All the events
+        else {
+            LocalDateTime now = LocalDateTime.now();
+            // Filter out events that are in the past
+            eventsToSort = arrayList.stream()
+                    .filter(event -> event.getDate() > now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                    .collect(Collectors.toList());
+        }
 
-        // Set the filtered and sorted list back into the adapter
+        // Sort the events
+        eventsToSort.sort((event1, event2) -> {
+            Long date1 = event1.getDate();
+            Long date2 = event2.getDate();
+            return date1.compareTo(date2); // Ascending order
+        });
+
+        // Set the sorted list back into the adapter
         arrayList.clear();
-        arrayList.addAll(futureEvents);
+        arrayList.addAll(eventsToSort);
     }
 
     public void setOnEventListener(OnEventListener onEventListener) {

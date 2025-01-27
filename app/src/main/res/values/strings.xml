@@ -53,4 +53,5 @@
     <string name="curr_password">Current password</string>
     <string name="new_pw1">New password</string>
     <string name="new_pw2">Repeat new password</string>
+    <string name="passed_event">Passed!</string>
 </resources>

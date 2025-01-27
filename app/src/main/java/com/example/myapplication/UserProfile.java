@@ -77,19 +77,20 @@ public class UserProfile extends AppCompatActivity {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
         firestore.collection("Users").document(user.getUid()).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Get infos from the FireStore document
-                        username.setText(documentSnapshot.getString("UserName"));
-                        email.setText(documentSnapshot.getString("UserEmail"));
-                        phone.setText(documentSnapshot.getString("PhoneNumber"));
-                        if (documentSnapshot.getString("isAdmin") != null && Objects.equals(documentSnapshot.getString("isAdmin"), "1"))
-                            isOrganizer.setVisibility(View.VISIBLE);
-                        else
-                            isOrganizer.setVisibility(View.GONE);
-                    } else
-                        Log.d("User Info", "No such document");
-                });
+            .addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    // Get infos from the FireStore document
+                    username.setText(documentSnapshot.getString("UserName"));
+                    email.setText(documentSnapshot.getString("UserEmail"));
+                    phone.setText(documentSnapshot.getString("PhoneNumber"));
+                    if (documentSnapshot.getString("isAdmin") != null && Objects.equals(documentSnapshot.getString("isAdmin"), "1"))
+                        isOrganizer.setVisibility(View.VISIBLE);
+                    else
+                        isOrganizer.setVisibility(View.GONE);
+                    Log.d("User Info", "User " + username.getText() + " | " + documentSnapshot);
+                } else
+                    Log.d("User Info", "No such document");
+        });
     }
 
     private void btnSetting() {
@@ -216,7 +217,7 @@ public class UserProfile extends AppCompatActivity {
                     });
                 }
             }
-            deleteUserData();
+            //deleteUserData();
         }).addOnFailureListener(e -> Log.e("Re-authentication Failed", "Re-authentication failed: ", e));
     }
 

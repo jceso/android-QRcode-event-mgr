@@ -23,13 +23,15 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="32dp"
+        android:autofillHints="Name"
         android:background="@drawable/rounded_corner"
         android:hint="@string/name"
         android:inputType="text"
         android:padding="18dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:maxLength="30" />
 
     <EditText
         android:id="@+id/email"
@@ -37,13 +39,15 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="16dp"
+        android:autofillHints="example@provider.domain"
         android:background="@drawable/rounded_corner"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:padding="18dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:maxLength="20"/>
 
     <EditText
         android:id="@+id/password"
@@ -51,13 +55,15 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="16dp"
+        android:autofillHints="password"
         android:background="@drawable/rounded_corner"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:padding="18dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:maxLength="20" />
 
     <EditText
         android:id="@+id/phone"
@@ -65,13 +71,15 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="18dp"
+        android:autofillHints="+12345678901"
         android:background="@drawable/rounded_corner"
         android:hint="@string/cellphone"
         android:inputType="phone"
         android:padding="18dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:maxLength="20" />
 
     <Button
         android:id="@+id/register_btn"

@@ -129,6 +129,8 @@ public class EventBooking extends AppCompatActivity {
                                         btn_book.setEnabled(false);
                                         if (salesList.contains(currentUserUID))
                                             btn_book.setText(R.string.bought);
+                                        else if (dateEvent.isBefore(LocalDateTime.now()))
+                                            btn_book.setText(R.string.passed_event);
                                         else
                                             btn_book.setText(R.string.sold_out);
                                     }

@@ -11,10 +11,12 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="5dp"
+        android:autofillHints="Evento"
         android:hint="@string/title"
         android:textSize="25sp"
         android:textStyle="bold"
-        android:inputType="textCapSentences" />
+        android:inputType="textCapSentences"
+        android:maxLength="50" />
 
     <EditText
         android:id="@+id/placeET"
@@ -24,13 +26,15 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
+        android:autofillHints="Posizione"
         android:padding="16dp"
         android:drawablePadding="16dp"
         android:drawableEnd="@drawable/location"
         android:hint="@string/location"
         android:textSize="20sp"
         android:textStyle="italic"
-        android:inputType="textCapSentences" />
+        android:inputType="textCapSentences"
+        android:maxLength="50" />
 
     <RelativeLayout
         android:id="@+id/date_timeLayout"
@@ -82,6 +86,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="15dp"
+        android:autofillHints="Lorem ipsum"
         android:gravity="start"
         android:hint="@string/description"
         android:textSize="20sp"
@@ -115,13 +120,15 @@
             android:layout_height="50dp"
             android:layout_marginEnd="35dp"
             android:layout_alignParentEnd="true"
+            android:autofillHints="12.34"
             android:drawableEnd="@drawable/money"
             android:drawablePadding="5dp"
             android:padding="7dp"
             android:hint="@string/free"
             android:textColor="#575757"
             android:textSize="20sp"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:maxLength="8" />
 
         <TextView
             android:id="@+id/seatsTxt"
@@ -142,13 +149,15 @@
             android:layout_marginEnd="35dp"
             android:layout_below="@id/priceET"
             android:layout_alignParentEnd="true"
+            android:autofillHints="123"
             android:drawableEnd="@drawable/numbers"
             android:drawablePadding="5dp"
             android:padding="7dp"
             android:hint="@string/no_limits"
             android:textColor="#575757"
             android:textSize="20sp"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="8" />
     </RelativeLayout>
 
 </RelativeLayout>

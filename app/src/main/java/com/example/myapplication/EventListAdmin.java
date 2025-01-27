@@ -161,7 +161,7 @@ public class EventListAdmin extends AppCompatActivity {
                 } else
                     price.setError(null);
 
-                if (!seats.getText().toString().trim().isEmpty() && !(Integer.parseInt(seats.getText().toString().trim()) <= 0)) {
+                if (!seats.getText().toString().trim().isEmpty() && Integer.parseInt(seats.getText().toString().trim()) <= 0) {
                     seats.setError("Availability must be greater than 0");
                     isValid = false;
                 } else {
@@ -194,7 +194,7 @@ public class EventListAdmin extends AppCompatActivity {
                 event.setPlace(place.getText().toString());
                 event.setDescription(desc.getText().toString());
                 event.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
-                event.setOrganizer(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+                event.setOrganizer(user.getUid());
 
                 // Save event to Firebase
                 database.getReference().child("event").push().setValue(event).addOnSuccessListener(unused -> {
@@ -285,7 +285,7 @@ public class EventListAdmin extends AppCompatActivity {
                     else
                         price.setText(new DecimalFormat("#0.00", symbols).format(event.getPrice()));
                     if (event.getSeats() == 0)
-                        seats.setText(R.string.availability);
+                        seats.setText(R.string.no_limits);
                     else
                         seats.setHint(String.valueOf(event.getSeats()));
                     qrImage.setImageBitmap(bitmap);
@@ -349,7 +349,7 @@ public class EventListAdmin extends AppCompatActivity {
                     else
                         price.setHint(String.valueOf(event.getPrice()));
                     if (event.getSeats() == 0)
-                        seats.setHint(R.string.availability);
+                        seats.setHint(R.string.no_limits);
                     else
                         seats.setHint(String.valueOf(event.getSeats()));
 
@@ -395,6 +395,19 @@ public class EventListAdmin extends AppCompatActivity {
                         } else
                             desc.setError(null);
 
+                        if (!price.getText().toString().trim().isEmpty() && !price.getText().toString().trim().matches("^\\d+(\\.\\d{1,2})?$")) {
+                            price.setError("Price must be a valid number (ex 12, 12.3, 12.34");
+                            isValid = false;
+                        } else
+                            price.setError(null);
+
+                        if (!seats.getText().toString().trim().isEmpty() && Integer.parseInt(seats.getText().toString().trim()) <= 0) {
+                            seats.setError("Availability must be greater than 0");
+                            isValid = false;
+                        } else {
+                            seats.setError(null);
+                        }
+
                         // Don't proceed to save if validation fails
                         if (!isValid)
                             return;
@@ -405,13 +418,13 @@ public class EventListAdmin extends AppCompatActivity {
                         // Price and availability setting
                         if (!price.getText().toString().isEmpty())
                             eventUpd.setPrice(Float.parseFloat(price.getText().toString()));
-                        else if (price.getHint() == "Free")
+                        else if ("Free".equals(price.getHint().toString()))
                             eventUpd.setSeats(0);
                         else
                             eventUpd.setPrice(Float.parseFloat(price.getHint().toString()));
                         if (!seats.getText().toString().isEmpty())
                             eventUpd.setSeats(Integer.parseInt(seats.getText().toString()));
-                        else if (seats.getHint() == "No limits")
+                        else if ("No limits".equals(seats.getHint().toString()))
                             eventUpd.setSeats(0);
                         else
                             eventUpd.setSeats(Integer.parseInt(seats.getHint().toString()));
@@ -421,6 +434,7 @@ public class EventListAdmin extends AppCompatActivity {
                         eventUpd.setPlace(place.getText().toString());
                         eventUpd.setDescription(desc.getText().toString());
                         eventUpd.setDate(dateInfos[0], dateInfos[1], dateInfos[2], dateInfos[3], dateInfos[4]);
+                        eventUpd.setOrganizer(user.getUid());
 
                         database.getReference().child("event").child(event.getKey()).setValue(eventUpd).addOnSuccessListener(unused -> {
                             progressBar.setVisibility(View.GONE);

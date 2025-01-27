@@ -32,9 +32,8 @@ public class BasicButtons {
     public static void handleLogoutButton(Context context) {
         FirebaseAuth.getInstance().signOut();
         context.startActivity(new Intent(context, Login.class));
-        if (context instanceof Activity) {
+        if (context instanceof Activity)
             ((Activity) context).finish();
-        }
     }
 
     // Check user authentication and set user button text
@@ -64,8 +63,6 @@ public class BasicButtons {
 
         userBtn.setOnClickListener(v -> {
             context.startActivity(new Intent(context, UserProfile.class));
-            if (context instanceof Activity)
-                ((Activity) context).finish();
         });
     }
 

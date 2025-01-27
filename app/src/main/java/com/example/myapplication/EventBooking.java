@@ -94,13 +94,21 @@ public class EventBooking extends AppCompatActivity {
 
                         String dateText = dateEvent.getDayOfMonth() + "/" + dateEvent.getMonthValue() + "/" + dateEvent.getYear();
                         String timeText = dateEvent.getHour() + ":" + String.format(Locale.getDefault(), "%02d", dateEvent.getMinute());
+                        String currentUserUID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                         List<String> salesList = new ArrayList<>();
+
+                        // Set event data
+                        title.setText(event.getTitle());
+                        place.setText(event.getPlace());
+                        description.setText(event.getDescription());
+                        date.setText(dateText);
+                        time.setText(timeText);
 
                         database.getReference().child("sale").orderByChild("eventUID").equalTo(eventUID).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (!snapshot.exists()) {
-                                    Log.e("SalesList", "No sales found for event: " + eventUID);
+                                    Log.d("SalesList", "No previous sales found for event: " + eventUID);
                                 } else {
                                     Log.d("SalesList", "Sales found for event: " + eventUID);
 
@@ -109,30 +117,32 @@ public class EventBooking extends AppCompatActivity {
                                         String userUID = saleSnapshot.child("userUID").getValue(String.class);
                                         salesList.add(userUID);
                                     }
+                                }
 
-                                    String currentUserUID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-
-                                    // Set event data
-                                    title.setText(event.getTitle());
-                                    place.setText(event.getPlace());
-                                    description.setText(event.getDescription());
-                                    date.setText(dateText);
-                                    time.setText(timeText);
-                                    if (event.getNum_subs() < event.getSeats() || event.getSeats() == 0 || !event.getOrganizer().equals(currentUserUID) && !salesList.contains(currentUserUID)) {
-                                        if (event.getPrice() == 0)
-                                            btn_book.setText(R.string.free);
-                                        else {
-                                            String priceText = new DecimalFormat("#0.00", symbols).format(event.getPrice()) + "€";
-                                            btn_book.setText(priceText);
+                                Log.d("SalesList", "Sales List: " + salesList);
+                                Log.d("Booking Check", event.getNum_subs() + " iscritti, " + event.getSeats() + " posti || Organizzatore " + event.getOrganizer() + " - Comprato: " + salesList.contains(currentUserUID));
+                                if (event.getOrganizer().equals(currentUserUID) || salesList.contains(currentUserUID)) {
+                                    btn_book.setEnabled(false);
+                                    if (salesList.contains(currentUserUID))
+                                        btn_book.setText(R.string.bought);
+                                    else
+                                        btn_book.setText(R.string.your_event);
+                                } else {
+                                    if (event.getNum_subs() < event.getSeats() || event.getSeats() == 0) {
+                                        if (dateEvent.isBefore(LocalDateTime.now())) {
+                                            btn_book.setEnabled(false);
+                                            btn_book.setText(R.string.passed_event);
+                                        } else {
+                                            if (event.getPrice() == 0)
+                                                btn_book.setText(R.string.free);
+                                            else {
+                                                String priceText = new DecimalFormat("#0.00", symbols).format(event.getPrice()) + "€";
+                                                btn_book.setText(priceText);
+                                            }
                                         }
                                     } else {
                                         btn_book.setEnabled(false);
-                                        if (salesList.contains(currentUserUID))
-                                            btn_book.setText(R.string.bought);
-                                        else if (dateEvent.isBefore(LocalDateTime.now()))
-                                            btn_book.setText(R.string.passed_event);
-                                        else
-                                            btn_book.setText(R.string.sold_out);
+                                        btn_book.setText(R.string.sold_out);
                                     }
                                 }
                             }

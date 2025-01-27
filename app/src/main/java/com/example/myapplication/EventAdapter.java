@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,28 +126,30 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     }
 
     private void sortEventsByDate() {
-        List<Event> eventsToSort;
+        LocalDateTime now = LocalDateTime.now();
+        Log.d("Sort events", "ArrayList at first, size: " + arrayList.size() + "\nEvents: " + this.arrayList);
 
-        if (layoutType == 1)            // ADMIN
-            eventsToSort = arrayList;   // All the events
-        else {
-            LocalDateTime now = LocalDateTime.now();
-            // Filter out events that are in the past
-            eventsToSort = arrayList.stream()
-                    .filter(event -> event.getDate() > now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-                    .collect(Collectors.toList());
-        }
+        // Filter out the events that are before the current time
+        List<Event> sortedEvents = arrayList.stream()
+            .filter(event -> {
+                // Only filter out past events if layoutType is not LAYOUT_ADMIN
+                if (layoutType != LAYOUT_ADMIN) {
+                    return event.getDate() > now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                }
+                return true; // Don't filter out past events if it's LAYOUT_ADMIN
+            })
+            .sorted((event1, event2) -> {
+                Long date1 = event1.getDate();
+                Long date2 = event2.getDate();
+                return date1.compareTo(date2); // Ascending order
+            })
+            .collect(Collectors.toList());
 
-        // Sort the events
-        eventsToSort.sort((event1, event2) -> {
-            Long date1 = event1.getDate();
-            Long date2 = event2.getDate();
-            return date1.compareTo(date2); // Ascending order
-        });
-
-        // Set the sorted list back into the adapter
+        Log.d("Sort events", "FutureEvents after filtering, size: " + sortedEvents.size() + "\nEvents: " + sortedEvents);
+        // Set the filtered and sorted list back into the adapter
         arrayList.clear();
-        arrayList.addAll(eventsToSort);
+        arrayList.addAll(sortedEvents);
+        Log.d("Sort events", "ArrayList after clear and adding, size: " + arrayList.size() + "\nEvents: " + this.arrayList);
     }
 
     public void setOnEventListener(OnEventListener onEventListener) {

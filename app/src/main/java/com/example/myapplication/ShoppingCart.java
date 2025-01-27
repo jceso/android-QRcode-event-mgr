@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -44,6 +45,7 @@ import androidmads.library.qrgenearator.QRGEncoder;
 
 public class ShoppingCart extends AppCompatActivity {
     private FirebaseDatabase database;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,16 +83,16 @@ public class ShoppingCart extends AppCompatActivity {
         Log.d("showBoughtEvents", "showBoughtEvents called");
 
         // Filter sales for the current user
-        String currentUserUID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        database.getReference().child("sale").orderByChild("userUID").equalTo(currentUserUID).addListenerForSingleValueEvent(new ValueEventListener() {
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        database.getReference().child("sale").orderByChild("userUID").equalTo(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot saleSnapshot) {
                 if (!saleSnapshot.exists()) {
-                    Log.d("ShoppingCart", "No sales found for user: " + currentUserUID);
+                    Log.d("ShoppingCart", "No sales found for user: " + user.getUid());
                     empty.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
                 } else {
-                    Log.d("SalesList", "Sales found for user: " + currentUserUID);
+                    Log.d("SalesList", "Sales found for user: " + user.getUid());
                     empty.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
 
@@ -132,15 +134,12 @@ public class ShoppingCart extends AppCompatActivity {
 
     private void updateRecyclerView(ArrayList<Event> eventList, RecyclerView recyclerView) {
         // Check if the event list is empty
-        if (eventList.isEmpty()) {
+        if (eventList.isEmpty())
             Log.d("ShoppingCart", "No events to display");
-            // You can show a message or do something else if the list is empty
-        }
 
         // Create the adapter and set it to the RecyclerView
         EventAdapter adapter = new EventAdapter(ShoppingCart.this, eventList, 3);
         recyclerView.setAdapter(adapter);
-        //adapter.notifyDataSetChanged();   // Update the UI if necessary
 
         // Show details of event on dialog
         adapter.setOnEventListener(event -> {
@@ -177,10 +176,25 @@ public class ShoppingCart extends AppCompatActivity {
             desc.setText(event.getDescription());
             date.setText(dateText);
             time.setText(timeText);
-            seats.setVisibility(View.GONE);
+            // Seat setting
+            database.getReference().child("sale").orderByChild("userUID").equalTo(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot saleSnapshot : snapshot.getChildren()) {
+                        String saleEventUID = saleSnapshot.child("eventUID").getValue(String.class);
+                        if (saleEventUID != null && saleEventUID.equals(event.getKey())) {
+                            String seatText = "Seat: " + saleSnapshot.child("seat").getValue(Integer.class);
+                            seats.setText(seatText);
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
+
             btn_showSales.setVisibility(View.GONE);
             organizer.setVisibility(View.GONE);
-            qrImage.setImageBitmap(bitmap);
+            qrImage.setVisibility(View.GONE);
             if (event.getPrice() == 0)
                 price.setText(R.string.free);
             else
@@ -198,11 +212,10 @@ public class ShoppingCart extends AppCompatActivity {
                         startActivity(Intent.createChooser(shareIntent, "Share via"));
                     }).create();
             alertDialog.show();
-
-
         });
     }
 
+    /*
     private void showCartEvents() {
         // Setting recycler view
         RecyclerView recyclerView = findViewById(R.id.recycler_cart);
@@ -229,4 +242,5 @@ public class ShoppingCart extends AppCompatActivity {
             }
         });
     }
+    */
 }

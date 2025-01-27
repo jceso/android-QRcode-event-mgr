@@ -102,7 +102,6 @@ public class QrScanner extends AppCompatActivity {
         });
 
         list.setOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(), EventListAdmin.class));
             finish();
         });
     }

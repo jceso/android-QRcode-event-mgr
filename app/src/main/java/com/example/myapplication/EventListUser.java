@@ -61,12 +61,10 @@ public class EventListUser extends AppCompatActivity {
 
         scanButton.setOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(), QrScanner.class));
-            finish();
         });
 
         cartButton.setOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(), ShoppingCart.class));
-            finish();
         });
 
         checkIfUserIsAdmin(adminButton);
@@ -85,7 +83,6 @@ public class EventListUser extends AppCompatActivity {
                 ArrayList<Event> arrayList = new ArrayList<>();
                 Set<String> savedEventKeys = EventFileManager.loadEvents(EventListUser.this);
                 savedEventKeys.remove(null);
-                Log.d("EventBooking", "Saved Event Keys: " + savedEventKeys);
 
                 // Filter events based on saved keys
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -132,7 +129,6 @@ public class EventListUser extends AppCompatActivity {
 
                             adminButton.setOnClickListener(v -> {
                                 startActivity(new Intent(getApplicationContext(), EventListAdmin.class));
-                                finish();
                             });
                         }
                         else

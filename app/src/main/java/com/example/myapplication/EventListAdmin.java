@@ -276,8 +276,10 @@ public class EventListAdmin extends AppCompatActivity {
                         // Get organizer of the event
                         if (documentSnapshot.exists() && !event.getOrganizer().equals(user.getUid()))
                             organizer.setText(String.format("Organized by %s", documentSnapshot.getString("UserName")));
-                        else
+                        else {
                             organizer.setVisibility(View.GONE);
+                            btn_showSales.setVisibility(View.GONE);
+                        }
                     });
 
                     if (event.getPrice() == 0)
